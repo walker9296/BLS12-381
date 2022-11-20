@@ -33,18 +33,11 @@ contract bls12381testcase0 {
     }
 */
     public function testP() {
-        fe ff = BLS12381.modInverseBranchlessP(BLS12381.r1);
-        // fe ff = BLS12381.inverse(BLS12381.r1);
-        fe f2 = BLS12381.mod(ff, BLS12381.P);
-        fe f3 = BLS12381.fromMont(f2);
-        fe f4 = BLS12381.toMont(f2);
-        bytes t3a = reverseBytes(num2bin(ff, 48), 48);      
-        bytes t3b = reverseBytes(num2bin(f2, 48), 48);      
-        bytes t3c = reverseBytes(num2bin(f3, 48), 48);      
-        bytes t4c = reverseBytes(num2bin(f4, 48), 48);      
-        require(ff == 0x15f65ec3fa80e4935c071a97a256ec6d77ce5853705257455f48985753c758baebf4000bc40c0002760900000002fffd);
+        fe ff2 = BLS12381.inverse(BLS12381.r1);
+        fe ff1 = BLS12381.modInverseBranchlessP(BLS12381.r1);
+        // require(ff1 == 0x15f65ec3fa80e4935c071a97a256ec6d77ce5853705257455f48985753c758baebf4000bc40c0002760900000002fffd);
 
-        require(true);
+        require(ff1 == ff2);
     }
 
 }
