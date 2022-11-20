@@ -1,0 +1,469 @@
+import "bls12381.scrypt";
+
+struct Pair {PointG1 g1; PointG2 g2;}
+struct Engine {
+	// Pair [3]pairs;
+	Pair [1]pairs; //rororo
+    int idxP;
+}
+
+library BLS12381Pairing {
+    // 2 ^ (-1)
+    static const fe twoInv = 0x17fbb8571a006596d3916126f2d14ca26e22d1ec31ebb502633cb57c253c276f855000053ab000011804000000015554;
+
+    static const int x = 0xd201000000010000;
+    static const bytes X = b'd201000000010000';
+    static const bytes MASK = b'0000000000000001';
+    static const bytes ZERO = b'0000000000000000';
+    // static const int PAIR_LEN = 3;
+    static const int PAIR_LEN = 1; //rororo
+
+    static const fe2 [10]Fe2_10Zero = [[0,0],[0,0],[0,0],[0,0],[0,0], [0,0],[0,0],[0,0],[0,0],[0,0]];
+
+    //--------------------- pairing.go
+
+    static function NewPairingEngine() : Engine {
+        // Pair [PAIR_LEN]pairs = [{BLS12381.PtG1Zero, BLS12381.Fe6Zero}, 
+        //                         {BLS12381.PtG1Zero, BLS12381.Fe6Zero},
+        //                         {BLS12381.PtG1Zero, BLS12381.Fe6Zero}];
+        Pair [PAIR_LEN]pairs = [{BLS12381.PtG1Zero, BLS12381.Fe6Zero}]; //rororo
+        return {pairs, 0};
+    }
+    
+    static function isZeroPair(Pair p) : bool {
+        return BLS12381.IsZeroG1(p.g1) || BLS12381.IsZeroG2(p.g2);
+    }
+
+    static function affinePair(Pair p) : Pair {
+        return {BLS12381.AffineG1(p.g1), BLS12381.AffineG2(p.g2)};
+    }
+
+    static function AddPair(Engine eng, PointG1 g1, PointG2 g2) : Engine {
+        if(isZeroPair({g1, g2}) == false) {
+            Pair pr = affinePair({g1, g2});
+            eng.pairs[eng.idxP] = pr;
+            eng.idxP += 1;
+        }
+        return eng;
+    }
+
+    static function AddPairInv(Engine eng, PointG1 g1, PointG2 g2) : Engine {
+        return AddPair(eng, BLS12381.NegG1(g1), g2);
+    }
+
+    static function ResetPair(Engine eng) : Engine {
+        eng.pairs = [
+            // {BLS12381.PtG1Zero, BLS12381.Fe6Zero},
+            // {BLS12381.PtG1Zero, BLS12381.Fe6Zero},
+            // {BLS12381.PtG1Zero, BLS12381.Fe6Zero}];
+            {BLS12381.PtG1Zero, BLS12381.Fe6Zero}]; //rororo
+        eng.idxP = 0;
+        return eng;
+    }
+
+    // Adaptation of Formula 3 in https://eprint.iacr.org/2010/526.pdf
+    static function doublingStep(fe2 [3]coeff, PointG2 r) : fe12 {
+        fe2 [10]t = Fe2_10Zero;
+        fe6 rr = BLS12381.Fe6Zero;
+
+        t[0] = BLS12381.mulFe2(r[0], r[1]);
+        t[0] = BLS12381.mulByFqFe2(t[0], twoInv);
+        t[1] = BLS12381.squareFe2(r[1]);
+        t[2] = BLS12381.squareFe2(r[2]);
+        t[7] = BLS12381.doubleFe2(t[2]);
+        t[7] = BLS12381.addFe2(t[7], t[2]);
+        t[3] = BLS12381.mulByBFe2(t[7]);
+        t[4] = BLS12381.doubleFe2(t[3]);
+        t[4] = BLS12381.addFe2(t[4], t[3]);
+        t[5] = BLS12381.addFe2(t[1], t[4]);
+        t[5] = BLS12381.mulByFqFe2(t[5], twoInv);
+        t[6] = BLS12381.addFe2(r[1], r[2]);
+        t[6] = BLS12381.squareFe2(t[6]);
+        t[7] = BLS12381.addFe2(t[2], t[1]);
+        t[6] = BLS12381.subFe2(t[6], t[7]);
+        coeff[0] = BLS12381.subFe2(t[3], t[1]);
+        t[7] = BLS12381.squareFe2(r[0]);
+        t[4] = BLS12381.subFe2(t[1], t[4]);
+
+        rr[0] = BLS12381.mulFe2(t[4], t[0]);
+
+        t[2] = BLS12381.squareFe2(t[3]);
+        t[3] = BLS12381.doubleFe2(t[2]);
+        t[3] = BLS12381.addFe2(t[3], t[2]);
+        t[5] = BLS12381.squareFe2(t[5]);
+        rr[1] = BLS12381.subFe2(t[5], t[3]);
+        rr[2] = BLS12381.mulFe2(t[1], t[6]);
+        t[0] = BLS12381.doubleFe2(t[7]);
+        coeff[1] = BLS12381.addFe2(t[0], t[7]);
+        coeff[2] = BLS12381.negFe2(t[6]);
+
+        return [coeff, rr];
+    }
+
+    // Algorithm 12 in https://eprint.iacr.org/2010/526.pdf
+    static function additionStep(fe2[3] coeff, PointG2 r, PointG2 q) : fe12 {
+        fe2 [10]t = Fe2_10Zero;
+
+        t[0] = BLS12381.mulFe2(q[1], r[2]);
+        t[0] = BLS12381.negFe2(t[0]);
+        t[0] = BLS12381.addFe2(t[0], r[1]);
+        t[1] = BLS12381.mulFe2(q[0], r[2]);
+        t[1] = BLS12381.negFe2(t[1]);
+        t[1] = BLS12381.addFe2(t[1], r[0]);
+        t[2] = BLS12381.squareFe2(t[0]);
+        t[3] = BLS12381.squareFe2(t[1]);
+        t[4] = BLS12381.mulFe2(t[1], t[3]);
+        t[2] = BLS12381.mulFe2(r[2], t[2]);
+        t[3] = BLS12381.mulFe2(r[0], t[3]);
+        t[5] = BLS12381.doubleFe2(t[3]);
+        t[5] = BLS12381.subFe2(t[4], t[5]);
+        t[5] = BLS12381.addFe2(t[5], t[2]);
+
+        r[0] = BLS12381.mulFe2(t[1], t[5]);
+        t[2] = BLS12381.subFe2(t[3], t[5]);
+        t[2] = BLS12381.mulFe2(t[2], t[0]);
+        t[3] = BLS12381.mulFe2(r[1], t[4]);
+        r[1] = BLS12381.subFe2(t[2], t[3]);
+        r[2] = BLS12381.mulFe2(r[2], t[4]);
+        t[2] = BLS12381.mulFe2(t[1], q[1]);
+        t[3] = BLS12381.mulFe2(t[0], q[0]);
+        coeff[0] = BLS12381.subFe2(t[3], t[2]);
+        coeff[1] = BLS12381.negFe2(t[0]);
+        coeff[2] = t[1];
+
+        return [coeff, r];
+    }
+
+    // Algorithm 5 in  https://eprint.iacr.org/2019/077.pdf
+    static function preCompute(fe2[68][3] ellCoeffs, PointG2 twistPoint) : fe2[68][3] {
+        if(BLS12381.IsZeroG2(twistPoint) == false) {
+            PointG2 r = twistPoint;
+            int j = 0;
+            int XBits = 62;
+            fe12 rtn = BLS12381.Fe12Zero;
+            loop(63) : i {
+
+                // bytes r0a = b'00';
+                // bytes r0b = b'00';
+                // loop(3) : j3 {
+                //     loop(2) : k3 {
+                //         r0a = reverseBytes(num2bin(ellCoeffs[j][j3][k3], 48), 48);
+                //         r0b = reverseBytes(num2bin(r[j3][k3], 48), 48);
+                //         require(true);
+                //     }
+                // }
+
+                rtn = doublingStep(ellCoeffs[j], r);
+                ellCoeffs[j] = rtn[0];
+                r = rtn[1];
+
+                if ((X & (MASK << (XBits - i))) != ZERO) {
+                    j++;
+                    rtn = additionStep(ellCoeffs[j], r, twistPoint);
+                    ellCoeffs[j] = rtn[0];
+                    r = rtn[1];
+                }
+                j++;
+            }
+        }
+
+        return ellCoeffs;
+    }
+
+    static function millerLoop(Engine eng) : fe12 {
+        fe2[PAIR_LEN][68][3] ellCoeffs = [
+           [BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
+            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
+            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
+            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
+            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
+            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
+            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
+            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
+            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
+            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
+            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
+            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
+            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
+            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
+            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
+            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
+            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero]];
+        
+        loop(PAIR_LEN) : i {
+            if(i < eng.idxP) {
+                ellCoeffs[i] = preCompute(ellCoeffs[i], eng.pairs[i].g2);
+            }
+        }
+
+        //roro
+        // loop(PAIR_LEN) : i3 {
+        //     loop(68) : j3 {
+        //         loop(3) : k3 {
+        //             loop(2) : m3 {
+        //                 bytes r0a = reverseBytes(num2bin(ellCoeffs[i3][j3][k3][m3], 48), 48);
+        //                 if(j3 == 0 && k3 == 0 && m3 == 0) {
+        //                     require(ellCoeffs[0][j3][k3][m3] == 0x05d45ccb3c3ce87fbd69a84b573002a723852ef395a0f43b6c3203db41ad92b268568828b145b9e28d70321e9959ee37);
+        //                 } else if(j3 == 67 && k3 == 2 && m3 == 1) {
+        //                     require(ellCoeffs[0][j3][k3][m3] == 0x18fe47f99861fdda7c4f79cb76bd4e76a59077137a9f6dc9428458fa37217c9a03231c22e6bd5a076821df260b89987c);
+        //                 } else if(i3 == 3 && j3 == 67 && k3 == 1 && m3 == 1) {
+        //                     require(ellCoeffs[i3][j3][k3][m3] == 0x0e3d7d2d86b8505d320f4b1df36bc73d027c96b837b02eb2f32d73ee73b8a16c0daf6633840b4398ab1c38b0e9391512);
+        //                 } else if(i3 == 3 && j3 == 67 && k3 == 2 && m3 == 0) {
+        //                     require(ellCoeffs[i3][j3][k3][m3] == 0x001f85f6a6d9a9eb05a11234777d168ba08e0e314b7e6ccb65fab57f919687cb9eeb2f782abd163ac3c0416645070feb);
+        //                 } else if(i3 == 3 && j3 == 67 && k3 == 2 && m3 == 1) {
+        //                     require(ellCoeffs[i3][j3][k3][m3] == 0x016c31b25b88ad871babc85d10b12dbc6dbb7761169c8591292001214df4698f99ce2811ea4c6eac47751d1b15c1995e);
+        //                 }
+                        
+        //                 require(true);
+        //             }
+        //         }
+        //     }
+        // }
+
+        fe12 f = BLS12381.oneFe12();
+        fe2 [10]t2 = Fe2_10Zero;
+        int j = 0;
+        int XBits = 62;
+        loop(63) : k {
+            if(62 - k != 62) {
+                f = BLS12381.squareFe12(f);
+            }
+            loop(PAIR_LEN) : i {
+                if(i < eng.idxP) {
+                    t2[0] = BLS12381.mulByFqFe2(ellCoeffs[i][j][2], eng.pairs[i].g1[1]);
+                    t2[1] = BLS12381.mulByFqFe2(ellCoeffs[i][j][1], eng.pairs[i].g1[0]);
+                    f = BLS12381.mulBy014AssignFe12(f, ellCoeffs[i][j][0], t2[1], t2[0]);
+                }
+            }
+            if ((X & (MASK << (XBits - k))) != ZERO) {
+                j++;
+                loop(PAIR_LEN) : i {
+                    if(i < eng.idxP) {
+                        t2[0] = BLS12381.mulByFqFe2(ellCoeffs[i][j][2], eng.pairs[i].g1[1]);
+                        t2[1] = BLS12381.mulByFqFe2(ellCoeffs[i][j][1], eng.pairs[i].g1[0]);
+                        f = BLS12381.mulBy014AssignFe12(f, ellCoeffs[i][j][0], t2[1], t2[0]);
+                    }
+                }
+            }
+            j++;
+        }
+
+        f = BLS12381.conjugateFe12(f);
+        return f;
+    }
+
+
+    static function expPair(fe12 a) : fe12 {
+        fe12 c = BLS12381.cyclotomicExp(a, x);
+        c = BLS12381.conjugateFe12(c);
+        return c;
+    }
+
+    static function finalExp(fe12 f) : fe12 {
+        fe12 [9]t = [BLS12381.Fe12Zero, BLS12381.Fe12Zero, BLS12381.Fe12Zero,
+                     BLS12381.Fe12Zero, BLS12381.Fe12Zero, BLS12381.Fe12Zero,
+                     BLS12381.Fe12Zero, BLS12381.Fe12Zero, BLS12381.Fe12Zero];
+
+        t[0] = BLS12381.frobeniusMapFe12(f, 6);
+
+        t[1] = BLS12381.inverseFe12(f);
+
+        t[2] = BLS12381.mulFe12(t[0], t[1]);
+        t[1] = t[2];
+        t[2] = BLS12381.frobeniusMapFe12(t[2], 2);
+        t[2] = BLS12381.mulFe12(t[2], t[1]);
+        t[1] = BLS12381.cyclotomicSquare(t[2]);
+        t[1] = BLS12381.conjugateFe12(t[1]);
+
+        // hard part
+        t[3] = expPair(t[2]);
+
+        t[4] = BLS12381.cyclotomicSquare(t[3]);
+        t[5] = BLS12381.mulFe12(t[1], t[3]);
+        t[1] = expPair(t[5]);
+        t[0] = expPair(t[1]);
+        t[6] = expPair(t[0]);
+
+        t[6] = BLS12381.mulFe12(t[6], t[4]);
+        t[4] = expPair(t[6]);
+        t[5] = BLS12381.conjugateFe12(t[5]);
+        t[4] = BLS12381.mulFe12(t[4], t[5]);
+        t[4] = BLS12381.mulFe12(t[4], t[2]);
+        
+        t[5] = BLS12381.conjugateFe12(t[2]);
+        t[1] = BLS12381.mulFe12(t[1], t[2]);
+        t[1] = BLS12381.frobeniusMapFe12(t[1], 3);
+        t[6] = BLS12381.mulFe12(t[6], t[5]);
+        t[6] = BLS12381.frobeniusMapFe12(t[6], 1);
+
+        t[3] = BLS12381.mulFe12(t[3], t[0]);
+        t[3] = BLS12381.frobeniusMapFe12(t[3], 2);
+        t[3] = BLS12381.mulFe12(t[3], t[1]);
+        t[3] = BLS12381.mulFe12(t[3], t[6]);
+        f = BLS12381.mulFe12(t[3], t[4]);
+        return f;
+    }
+/*
+    static function calculatePair(Engine eng) : fe12 {
+        fe12 f = BLS12381.Fe12Zero;
+        if(eng.idxP > 0) {
+            f = millerLoop(eng, f);
+            finalExp(f);
+        }
+        return f;
+    }
+
+    static function CheckPair(Engine eng) : bool {
+        fe12 f = calculatePair(eng);
+        return BLS12381.isOneFe12(f);
+    }
+
+    static function ResultPair(Engine eng) : fe12 {
+        fe12 f = calculatePair(eng);
+        return f;
+    }
+
+
+    // Check four pairs.
+    // A * B + inputs * (-gamma) + C * (-delta) == alpha * beta
+    static function pairCheck4Point(
+            PointG1 a0, PointG2 b0,
+            PointG1 a1, PointG2 b1,
+            PointG1 a2, PointG2 b2,
+            PointG1 a3, PointG2 b3) : bool {
+
+        
+        fe12 f = BLS12381.Fe12Zero;
+
+        Engine eng = NewPairingEngine();
+
+        eng = AddPair(eng, a1, b1);
+        eng = AddPair(eng, a2, b2);
+        eng = AddPair(eng, a3, b3);
+        eng = AddPairInv(eng, a0, b0);
+
+        f = BLS12381Pairing.millerLoop(eng);
+        fe12 f2 = [
+        [[0x024381f6694d4598317f84da5ee81766d8714055b2a4552eec85ed9fbcaad899af91ebcc4243123895f466b967c477e3,
+        0x0d81eb49f3501f405d8b3e9ec06455fc6677f3e42e2cd6cbb312b31b623877132f037fec054228d02567b9aab04e7ac4], 
+        [0x06b6ca30ea816c93c979267aa5501be7e1b21f6e6c29b50b902c12f084cca896ff82f6f9d5e93804ab1c4d4c22d8673f, 
+        0x191a98c7a827d473aa9c529132759d329b622782e6ebdb809e1d335455dfe89cb044815b7ae008ace4e392421b1610a4], 
+        [0x0086eeef8296d421942a063f5e532f91755ca0103a8f6cd2fca46f95124fc8b8622132c1387e23453b561b53e67aefe1, 
+        0x0ef00069b2ecc5985f43ba5cb8ffd9e127c3f02a2b3508d67c9c7bcba45c0d685042d2336002ce6a69e2cdc086cca713]],
+
+        [[0x1220e13ae8b2003a755467528379c116e1fbb652f4d8cd3876df8d347bcf0fee56f9e867e9baf70c060772788ac3917b,
+        0x0a97c71eb8d89add5a1d6ee636061d9076c05e91d1fdbf965435fbae8a02c222712cbc11ba1ec1e0ffa2a6b477d76c1b],
+        [0x0e535f8c491d5900259a3c5201aa9ef34b391b378f50a7a843d0dbf596248ce8b57dfa9b56f98645ee892af9db5d5c14,
+        0x0e3d7d2d86b8505d320f4b1df36bc73d027c96b837b02eb2f32d73ee73b8a16c0daf6633840b4398ab1c38b0e9391512],
+        [0x001f85f6a6d9a9eb05a11234777d168ba08e0e314b7e6ccb65fab57f919687cb9eeb2f782abd163ac3c0416645070feb,
+        0x016c31b25b88ad871babc85d10b12dbc6dbb7761169c8591292001214df4698f99ce2811ea4c6eac47751d1b15c1995e]]];
+        require(f == f2);
+
+        f = finalExp(f);
+
+        return BLS12381.isOneFe12(f);
+    }
+*/
+    // Check three pairs.
+    // millerb1a1 + A * B + inputs * (-gamma) + C * (-delta) == 1
+    static function pairCheck3Point(
+            PointG1 a0, PointG2 b0,
+            fe12 millerb1a1,
+            PointG1 a2, PointG2 b2,
+            PointG1 a3, PointG2 b3) : bool {
+
+        Engine eng = NewPairingEngine();
+
+        fe12 f2 = BLS12381.Fe12Zero;
+        fe12 f3 = BLS12381.Fe12Zero;
+        fe12 f0 = BLS12381.Fe12Zero;
+        fe12 acc = BLS12381.Fe12Zero;
+        eng = AddPair(eng, a2, b2);
+        f2 = millerLoop(eng);
+        fe12 f2OK = [
+        // f2 = [
+            [[0x08342fec157f3e7538dd8ee3aecd0c46ebf8a574c19633e2624ea45acc671e43fed6eaa3ebeb1531dcf44f45f88d19f2,   
+            0x109422a5ebfae035de9555630769b8a4bea1f9bb0cd8c7087c09c312b4f7af7d01e19d73f2384d18e8ae689dd6874358],    
+            [0x16a106e9a4ea743092c706367ff17b874e8c8c23aa7b945422d783ab904c20991a00a134df2bb3d25d20479e63f9c039,    
+            0x018812fef94484ac1485e11d1fcce4374cb1321fe525d5972b33ea76faf816f367643f23b266f6437e91630e10cd712b],    
+            [0x18af91e64ed8c3a15baaf424f3697054b53f85d4ecac4e64b550a187912c3ab10c23497f341ab87d521249e0199bb63f,    
+            0x05ab4b1b7f2788b8c4b7da0075c17539287529ac420d233f18096f264a6a928e12d80a74616fbf1ab39a381000a40e69]],   
+
+            [[0x13a59183f3e2f315c4198adf4e0974508ef17df3e03fe710aec1571c36ddcb100b0f47d935564845c2dad808d2e77e44,   
+            0x005dd9b571b28faae7a41dc3b5cd968f4ef4e208415abb5dd4ff59532b47aae21cbd0929a657e68edd8180e8ec98a0f1],    
+            [0x0a55ef51025779f20ccfd9f7ecf42ff460c8bc9a25758fb0dd9966957a22b2bb59250229a8c6aef4eda2f20e24345d0b,    
+            0x18486dd2efbfc016175a456eead3e1056176df2b37f5ce012f1367bf4ea3d95a0d1945a1495415e15b7a025721a63084],    
+            [0x0bc42c58a9c3375d5e63f056fe4c9ef8150dda580236e5df754a02309ecdd339e24cec7bcf70ee3b10de09824433580a,    
+            0x0da028064af695cb0d0e5e8e88b93fa9b216565a3c9b99a9131714013c8abd277e2123b447c1e4332280c5c60625e10d]]];
+        require(f2 == f2OK);
+        // return(f2 == f2OK);
+
+
+        eng = ResetPair(eng);
+        eng = AddPair(eng, a3, b3);
+        f3 = millerLoop(eng);
+        fe12 f3OK = [
+        // f3 = [
+            [[0x0b7ef000b2ec5bc6386cb272cfa8f9e9ba55570079817c156bfe05fe3e591225c6b56d43ad5d48e99c3afd42325c0a06,   
+            0x04b0b0545ae371e267a1f7889961a2da4f0008ad83cc192da6f08c43f15ed24193eff0256cfb4303d09de7dd96410b09],    
+            [0x18b9b2df0279a426a29d4d11e5c64d0d1c179231dd5eb4e6957d24262912dd40d087ca3ea41070a68e0925e7b9cdc172,    
+            0x003283ef7c99317d80adcf278a63e6cfabe653d6f78aca8734c2890768b706384ed6aee08ccc1408939b9f41f8b5691e],    
+            [0x0c1c5cc7ba7ca0a40bd4a508218e5c5d7b35f372bf6445ee6b1db631aedd95b43cc7922d045dee2b783e1dce0fd4fad6,    
+            0x19a371f3ddbae86db7d150f9a52f3e66c653165994b950b44028ea9898ae198869f9272f9e4d0692680fee4b79f9004c]],   
+
+            [[0x0dc75796a998625f17d608294d614d029137945e950f26827aa2232f98eb9ee0d347469c7fdbd61c0d7ef9d7a5fdbf0f,   
+            0x0400126d3cf8e4bc5ea0f0f592c40e08da616d8ae8c61687deb100f0e4674f0d4072fe8968d3e69705649787f8c142e6],    
+            [0x10426f6b74e23ccb722b4388b8e1fded8fdefba9e7d0f44c9b4c458e3a49f630959432411dac46ff194c715190eaf91e,    
+            0x08da0a3ca462cbf53eeffb702307e1648d84fcfa4067b030935a206f3f53d4d7264459903e17aa050d63f3f43cd76008],    
+            [0x084a2475aaff73689b69f3ce9abad6cfdad196ff730f1e5a8d695605c06256a30e16d842242ed2e165cbef6b12ed7631,    
+            0x0f94f5002ba0359ee7b4a7d93b8ba807557e27adec1ac864e187da5d6ec1b70764179ff9c6c6c59e3e411244fc4f948e]]];  
+        require(f3 == f3OK);
+        // return(f3 == f3OK);
+
+        eng = ResetPair(eng);
+        eng = AddPairInv(eng, a0, b0);
+        f0 = millerLoop(eng);
+        fe12 f0OK = [
+        // f0 = [
+            [[0x0ed87db77aee7ad8e68fadbccff9c7f8b440da8dda7b4be9be901936f67580d28175127a75921b9439cc170f5463958f,   
+            0x196b01daf2c81e7b138ec709b17d0a455b57f23e0dee3e54552823f1d37426f35c766f9432c16777d3b396c3652ea8f1],    
+            [0x0ef346f9f28f56012d9fe5852044f7f14633ba261dc24a6d3c6e43a1f108fcc2289a61899108ed06ba7ccc7082030e8b,    
+            0x01296478963845f9b0830488b85c23e0b46f46dea81466a9f93fb99f58bfa7ab8d941a13805974eda1218574481c4d3e],    
+            [0x10352f039e41bb249adab3197306c74cb1c6fefe89338804ba9fd832a2d7f8bc6123208eab236ea1b45130be35172a5e,    
+            0x1285c391cee3c6d3c2db19a3e18873bc5309a0009cd4ea1c0bab20f2f29a1d2fb5f5b00b7decdbd4d9fa5265c3af3f89]],   
+
+            [[0x011f9ab03c3b2551db07fac130dc040bc9ea58d8c3d3cd360610c834bd933e6859a431ea8222e9a7e1325e24c821bdf3,   
+            0x183b9bb419bd6c04ddf3e2ca87049ea4aba33c28f4a6668291e1a5f70edafc6bd6fb1f138f2c31bc5393bcacf79acaee],    
+            [0x047c30c4d998f7549b89a4fecd1c75a01a69ea808ec95ca5ba963ff19dcc8e4148e22d15b96b4911eaa150468a68250a,    
+            0x13695bb17390c45ab38549ccdc88c7c496959d3c31986f79f11ea313f4a5f9850a032ad9fb3fb966fd50503baedf856f],    
+            [0x156fd408b3c078c2ec99e2ed9f38b1701de16db04e931ad94070a3dc55a1dcc7ce4c8c5a5022c96ee0c53308d1688c4d,    
+            0x15711766086ce2df7472c398829977f41855eb82c074e5a111881b36cafc13be40f762f9a23538d0248453531260a2d8]]];  
+        require(f0 == f0OK);
+        // return(f0 == f0OK);
+
+        acc = BLS12381.mulFe12(millerb1a1, f2);
+        acc = BLS12381.mulFe12(acc, f3);
+        acc = BLS12381.mulFe12(acc, f0);
+        fe12 accOK = [
+            [[0x024381f6694d4598317f84da5ee81766d8714055b2a4552eec85ed9fbcaad899af91ebcc4243123895f466b967c477e3,   
+            0x0d81eb49f3501f405d8b3e9ec06455fc6677f3e42e2cd6cbb312b31b623877132f037fec054228d02567b9aab04e7ac4],    
+            [0x06b6ca30ea816c93c979267aa5501be7e1b21f6e6c29b50b902c12f084cca896ff82f6f9d5e93804ab1c4d4c22d8673f,    
+            0x191a98c7a827d473aa9c529132759d329b622782e6ebdb809e1d335455dfe89cb044815b7ae008ace4e392421b1610a4],    
+            [0x0086eeef8296d421942a063f5e532f91755ca0103a8f6cd2fca46f95124fc8b8622132c1387e23453b561b53e67aefe1,    
+            0x0ef00069b2ecc5985f43ba5cb8ffd9e127c3f02a2b3508d67c9c7bcba45c0d685042d2336002ce6a69e2cdc086cca713]],   
+
+            [[0x1220e13ae8b2003a755467528379c116e1fbb652f4d8cd3876df8d347bcf0fee56f9e867e9baf70c060772788ac3917b,   
+            0x0a97c71eb8d89add5a1d6ee636061d9076c05e91d1fdbf965435fbae8a02c222712cbc11ba1ec1e0ffa2a6b477d76c1b],    
+            [0x0e535f8c491d5900259a3c5201aa9ef34b391b378f50a7a843d0dbf596248ce8b57dfa9b56f98645ee892af9db5d5c14,    
+            0x0e3d7d2d86b8505d320f4b1df36bc73d027c96b837b02eb2f32d73ee73b8a16c0daf6633840b4398ab1c38b0e9391512],    
+            [0x001f85f6a6d9a9eb05a11234777d168ba08e0e314b7e6ccb65fab57f919687cb9eeb2f782abd163ac3c0416645070feb,    
+            0x016c31b25b88ad871babc85d10b12dbc6dbb7761169c8591292001214df4698f99ce2811ea4c6eac47751d1b15c1995e]]];  
+        require(acc == accOK);
+
+        acc = finalExp(acc);
+
+        return BLS12381.isOneFe12(acc);
+    }
+
+}
+
