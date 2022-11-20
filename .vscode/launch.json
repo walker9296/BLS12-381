@@ -1,0 +1,35 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "scrypt",
+            "request": "launch",
+            "name": "testMod",
+            "program": "${workspaceFolder}/contracts/bls12381case0.scrypt",
+            "constructorArgs": [],
+            "pubFunc": "testMod",
+            "pubFuncArgs": []
+        },
+        {
+            "type": "scrypt",
+            "request": "launch",
+            "name": "testP",
+            "program": "${workspaceFolder}/contracts/bls12381case0.scrypt",
+            "constructorArgs": [],
+            "pubFunc": "testP",
+            "pubFuncArgs": []
+        },
+        {
+          "type": "scrypt",
+          "request": "launch",
+          "name": "verify3Point",
+          "program": "${workspaceFolder}/contracts/zksnark12381.scrypt",
+          "constructorArgs": [],
+          "pubFunc": "testVerify3Point",
+          "pubFuncArgs": []
+        }
+    ]
+}
