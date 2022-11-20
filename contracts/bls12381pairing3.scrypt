@@ -18,15 +18,12 @@ library BLS12381Pairing {
     // static const int PAIR_LEN = 3;
     static const int PAIR_LEN = 1; //rororo
 
-    static const fe2 [10]Fe2_10Zero = [[0,0],[0,0],[0,0],[0,0],[0,0], [0,0],[0,0],[0,0],[0,0],[0,0]];
+    static const fe2 [10]Fe2_10Zero = repeat(BLS12381.Fe2Zero, 10);
 
     //--------------------- pairing.go
 
     static function NewPairingEngine() : Engine {
-        // Pair [PAIR_LEN]pairs = [{BLS12381.PtG1Zero, BLS12381.Fe6Zero}, 
-        //                         {BLS12381.PtG1Zero, BLS12381.Fe6Zero},
-        //                         {BLS12381.PtG1Zero, BLS12381.Fe6Zero}];
-        Pair [PAIR_LEN]pairs = [{BLS12381.PtG1Zero, BLS12381.Fe6Zero}]; //rororo
+        Pair [PAIR_LEN]pairs = [{BLS12381.PtG1Zero, BLS12381.Fe6Zero}];
         return {pairs, 0};
     }
     
@@ -53,10 +50,7 @@ library BLS12381Pairing {
 
     static function ResetPair(Engine eng) : Engine {
         eng.pairs = [
-            // {BLS12381.PtG1Zero, BLS12381.Fe6Zero},
-            // {BLS12381.PtG1Zero, BLS12381.Fe6Zero},
-            // {BLS12381.PtG1Zero, BLS12381.Fe6Zero}];
-            {BLS12381.PtG1Zero, BLS12381.Fe6Zero}]; //rororo
+            {BLS12381.PtG1Zero, BLS12381.Fe6Zero}];
         eng.idxP = 0;
         return eng;
     }
@@ -142,17 +136,6 @@ library BLS12381Pairing {
             int XBits = 62;
             fe12 rtn = BLS12381.Fe12Zero;
             loop(63) : i {
-
-                // bytes r0a = b'00';
-                // bytes r0b = b'00';
-                // loop(3) : j3 {
-                //     loop(2) : k3 {
-                //         r0a = reverseBytes(num2bin(ellCoeffs[j][j3][k3], 48), 48);
-                //         r0b = reverseBytes(num2bin(r[j3][k3], 48), 48);
-                //         require(true);
-                //     }
-                // }
-
                 rtn = doublingStep(ellCoeffs[j], r);
                 ellCoeffs[j] = rtn[0];
                 r = rtn[1];
@@ -171,54 +154,13 @@ library BLS12381Pairing {
     }
 
     static function millerLoop(Engine eng) : fe12 {
-        fe2[PAIR_LEN][68][3] ellCoeffs = [
-           [BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
-            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
-            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
-            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
-            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
-            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
-            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
-            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
-            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
-            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
-            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
-            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
-            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
-            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
-            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
-            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero,
-            BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero, BLS12381.Fe6Zero]];
+        fe2[PAIR_LEN][68][3] ellCoeffs = [repeat(BLS12381.Fe6Zero, 68)];
         
         loop(PAIR_LEN) : i {
             if(i < eng.idxP) {
                 ellCoeffs[i] = preCompute(ellCoeffs[i], eng.pairs[i].g2);
             }
         }
-
-        //roro
-        // loop(PAIR_LEN) : i3 {
-        //     loop(68) : j3 {
-        //         loop(3) : k3 {
-        //             loop(2) : m3 {
-        //                 bytes r0a = reverseBytes(num2bin(ellCoeffs[i3][j3][k3][m3], 48), 48);
-        //                 if(j3 == 0 && k3 == 0 && m3 == 0) {
-        //                     require(ellCoeffs[0][j3][k3][m3] == 0x05d45ccb3c3ce87fbd69a84b573002a723852ef395a0f43b6c3203db41ad92b268568828b145b9e28d70321e9959ee37);
-        //                 } else if(j3 == 67 && k3 == 2 && m3 == 1) {
-        //                     require(ellCoeffs[0][j3][k3][m3] == 0x18fe47f99861fdda7c4f79cb76bd4e76a59077137a9f6dc9428458fa37217c9a03231c22e6bd5a076821df260b89987c);
-        //                 } else if(i3 == 3 && j3 == 67 && k3 == 1 && m3 == 1) {
-        //                     require(ellCoeffs[i3][j3][k3][m3] == 0x0e3d7d2d86b8505d320f4b1df36bc73d027c96b837b02eb2f32d73ee73b8a16c0daf6633840b4398ab1c38b0e9391512);
-        //                 } else if(i3 == 3 && j3 == 67 && k3 == 2 && m3 == 0) {
-        //                     require(ellCoeffs[i3][j3][k3][m3] == 0x001f85f6a6d9a9eb05a11234777d168ba08e0e314b7e6ccb65fab57f919687cb9eeb2f782abd163ac3c0416645070feb);
-        //                 } else if(i3 == 3 && j3 == 67 && k3 == 2 && m3 == 1) {
-        //                     require(ellCoeffs[i3][j3][k3][m3] == 0x016c31b25b88ad871babc85d10b12dbc6dbb7761169c8591292001214df4698f99ce2811ea4c6eac47751d1b15c1995e);
-        //                 }
-                        
-        //                 require(true);
-        //             }
-        //         }
-        //     }
-        // }
 
         fe12 f = BLS12381.oneFe12();
         fe2 [10]t2 = Fe2_10Zero;
@@ -260,9 +202,7 @@ library BLS12381Pairing {
     }
 
     static function finalExp(fe12 f) : fe12 {
-        fe12 [9]t = [BLS12381.Fe12Zero, BLS12381.Fe12Zero, BLS12381.Fe12Zero,
-                     BLS12381.Fe12Zero, BLS12381.Fe12Zero, BLS12381.Fe12Zero,
-                     BLS12381.Fe12Zero, BLS12381.Fe12Zero, BLS12381.Fe12Zero];
+        fe12 [9]t = repeat(BLS12381.Fe12Zero, 9);
 
         t[0] = BLS12381.frobeniusMapFe12(f, 6);
 
@@ -303,67 +243,7 @@ library BLS12381Pairing {
         f = BLS12381.mulFe12(t[3], t[4]);
         return f;
     }
-/*
-    static function calculatePair(Engine eng) : fe12 {
-        fe12 f = BLS12381.Fe12Zero;
-        if(eng.idxP > 0) {
-            f = millerLoop(eng, f);
-            finalExp(f);
-        }
-        return f;
-    }
 
-    static function CheckPair(Engine eng) : bool {
-        fe12 f = calculatePair(eng);
-        return BLS12381.isOneFe12(f);
-    }
-
-    static function ResultPair(Engine eng) : fe12 {
-        fe12 f = calculatePair(eng);
-        return f;
-    }
-
-
-    // Check four pairs.
-    // A * B + inputs * (-gamma) + C * (-delta) == alpha * beta
-    static function pairCheck4Point(
-            PointG1 a0, PointG2 b0,
-            PointG1 a1, PointG2 b1,
-            PointG1 a2, PointG2 b2,
-            PointG1 a3, PointG2 b3) : bool {
-
-        
-        fe12 f = BLS12381.Fe12Zero;
-
-        Engine eng = NewPairingEngine();
-
-        eng = AddPair(eng, a1, b1);
-        eng = AddPair(eng, a2, b2);
-        eng = AddPair(eng, a3, b3);
-        eng = AddPairInv(eng, a0, b0);
-
-        f = BLS12381Pairing.millerLoop(eng);
-        fe12 f2 = [
-        [[0x024381f6694d4598317f84da5ee81766d8714055b2a4552eec85ed9fbcaad899af91ebcc4243123895f466b967c477e3,
-        0x0d81eb49f3501f405d8b3e9ec06455fc6677f3e42e2cd6cbb312b31b623877132f037fec054228d02567b9aab04e7ac4], 
-        [0x06b6ca30ea816c93c979267aa5501be7e1b21f6e6c29b50b902c12f084cca896ff82f6f9d5e93804ab1c4d4c22d8673f, 
-        0x191a98c7a827d473aa9c529132759d329b622782e6ebdb809e1d335455dfe89cb044815b7ae008ace4e392421b1610a4], 
-        [0x0086eeef8296d421942a063f5e532f91755ca0103a8f6cd2fca46f95124fc8b8622132c1387e23453b561b53e67aefe1, 
-        0x0ef00069b2ecc5985f43ba5cb8ffd9e127c3f02a2b3508d67c9c7bcba45c0d685042d2336002ce6a69e2cdc086cca713]],
-
-        [[0x1220e13ae8b2003a755467528379c116e1fbb652f4d8cd3876df8d347bcf0fee56f9e867e9baf70c060772788ac3917b,
-        0x0a97c71eb8d89add5a1d6ee636061d9076c05e91d1fdbf965435fbae8a02c222712cbc11ba1ec1e0ffa2a6b477d76c1b],
-        [0x0e535f8c491d5900259a3c5201aa9ef34b391b378f50a7a843d0dbf596248ce8b57dfa9b56f98645ee892af9db5d5c14,
-        0x0e3d7d2d86b8505d320f4b1df36bc73d027c96b837b02eb2f32d73ee73b8a16c0daf6633840b4398ab1c38b0e9391512],
-        [0x001f85f6a6d9a9eb05a11234777d168ba08e0e314b7e6ccb65fab57f919687cb9eeb2f782abd163ac3c0416645070feb,
-        0x016c31b25b88ad871babc85d10b12dbc6dbb7761169c8591292001214df4698f99ce2811ea4c6eac47751d1b15c1995e]]];
-        require(f == f2);
-
-        f = finalExp(f);
-
-        return BLS12381.isOneFe12(f);
-    }
-*/
     // Check three pairs.
     // millerb1a1 + A * B + inputs * (-gamma) + C * (-delta) == 1
     static function pairCheck3Point(
@@ -396,9 +276,9 @@ library BLS12381Pairing {
             [0x0bc42c58a9c3375d5e63f056fe4c9ef8150dda580236e5df754a02309ecdd339e24cec7bcf70ee3b10de09824433580a,    
             0x0da028064af695cb0d0e5e8e88b93fa9b216565a3c9b99a9131714013c8abd277e2123b447c1e4332280c5c60625e10d]]];
         require(f2 == f2OK);
-        // return(f2 == f2OK);
+        return(f2 == f2OK);
 
-
+/*
         eng = ResetPair(eng);
         eng = AddPair(eng, a3, b3);
         f3 = millerLoop(eng);
@@ -462,7 +342,7 @@ library BLS12381Pairing {
 
         acc = finalExp(acc);
 
-        return BLS12381.isOneFe12(acc);
+        return BLS12381.isOneFe12(acc);*/
     }
 
 }
