@@ -23,6 +23,15 @@
             "pubFuncArgs": []
         },
         {
+            "type": "scrypt",
+            "request": "launch",
+            "name": "alphaBetaMiller",
+            "program": "${workspaceFolder}/contracts/bls12381case1.scrypt",
+            "constructorArgs": [],
+            "pubFunc": "alphaBetaMillerLoop",
+            "pubFuncArgs": []
+        },
+        {
           "type": "scrypt",
           "request": "launch",
           "name": "verify3Point",
