@@ -34,7 +34,7 @@ library BLS12381Pairing {
     static function affinePair(Pair p) : Pair {
         return {BLS12381.AffineG1(p.g1), BLS12381.AffineG2(p.g2)};
     }
-
+/*
     static function AddPair(Engine eng, PointG1 g1, PointG2 g2) : Engine {
         if(isZeroPair({g1, g2}) == false) {
             Pair pr = affinePair({g1, g2});
@@ -193,8 +193,8 @@ library BLS12381Pairing {
         f = BLS12381.conjugateFe12(f);
         return f;
     }
+*/
 
-/*
     static function expPair(fe12 a) : fe12 {
         fe12 c = BLS12381.cyclotomicExp(a, x);
         c = BLS12381.conjugateFe12(c);
@@ -243,7 +243,7 @@ library BLS12381Pairing {
         f = BLS12381.mulFe12(t[3], t[4]);
         return f;
     }
-*/
+
     // Check three pairs.
     // millerb1a1 + A * B + inputs * (-gamma) + C * (-delta) == 1
     static function pairCheck3Point(
@@ -254,7 +254,7 @@ library BLS12381Pairing {
 
         Engine eng = NewPairingEngine();
 
-        fe12 f2 = BLS12381.Fe12Zero;
+/*        fe12 f2 = BLS12381.Fe12Zero;
         fe12 f3 = BLS12381.Fe12Zero;
         fe12 f0 = BLS12381.Fe12Zero;
         fe12 acc = BLS12381.Fe12Zero;
@@ -314,7 +314,8 @@ library BLS12381Pairing {
         acc = BLS12381.mulFe12(millerb1a1, f2);
         acc = BLS12381.mulFe12(acc, f3);
         acc = BLS12381.mulFe12(acc, f0);
-        fe12 accOK = [
+        fe12 accOK = [ */
+        fe12 acc = [
             [[0x02be91c6158b6b708b22a077840f029cd3df3c8e2caf0209272e993f71ad3d55bed30edd5a7401170e023028ccfbc29e,   
             0x097972e56910dc9f4400dabcca85b24a7c7b8508c86123affb5b2675f98cd5766076e912d7269b74b541705d6ae1cac6],    
             [0x1014b26491a0422453c98accf075fd73d7be608a981538183d716721d10a5d269504b74eb9d96e9b8028962519587127,    
@@ -327,11 +328,11 @@ library BLS12381Pairing {
             0x0fe1fbfab0fb3981aaa12da5c66437f0529f6499a4938a408b38d169a3402c29e85ee5132ee4c6ce1cdb54e6e7260888],    
             [0x0668235f020fd5414006d58e38b29d08d410b2a9125e720cc02db8d44c57d4d6ebb82d6835b81bd7b38bf14b23c7257b,    
             0x16e12e76754ea584756fe92a76186a9e0a165e89cbad11d1c761958b2150d912d4bb5d8738f9df74810c25d89bef962e]]];  
-        return(acc == accOK);
+        // return(acc == accOK);
 
-        // acc = finalExp(acc);
+        acc = finalExp(acc);
 
-        // return BLS12381.isOneFe12(acc);
+        return BLS12381.isOneFe12(acc);
     }
 
 }

@@ -18,81 +18,45 @@ library ZKSNARK12381 {
     static const int N = 1;    // Number of public inputs.
     static const int N_1 = 2;  // N + 1
 
-    static function vkXSetup(int[N] inputs, PointG1[N_1] ic) : PointG1 {
-	    PointG1 vk_x = ic[0];
-        loop (N) : i {
-            PointG1 p = BLS12381.MulScalarG1(ic[i + 1], inputs[i]);
-            vk_x = BLS12381.AddG1(vk_x, p);
-        }
-	    return vk_x;
-    }
+    // static function vkXSetup(int[N] inputs, PointG1[N_1] ic) : PointG1 {
+	//     PointG1 vk_x = ic[0];
+    //     loop (N) : i {
+    //         PointG1 p = BLS12381.MulScalarG1(ic[i + 1], inputs[i]);
+    //         vk_x = BLS12381.AddG1(vk_x, p);
+    //     }
+	//     return vk_x;
+    // }
 
     static function verify3Point(int[N] inputs, Proof proof, VerifyingKey3Point vk) : bool {
-        loop(3) : k {
-            proof.a[k] = BLS12381.toMont(proof.a[k]);
-            proof.c[k] = BLS12381.toMont(proof.c[k]);
-            loop(N_1) : m {
-                vk.ic[m][k] = BLS12381.toMont(vk.ic[m][k]);
-            }
-        }
-        loop(3) : j {
-            loop(2) : k {
-                proof.b[j][k] = BLS12381.toMont(proof.b[j][k]);
-                vk.gamma[j][k] = BLS12381.toMont(vk.gamma[j][k]);
-                vk.delta[j][k] = BLS12381.toMont(vk.delta[j][k]);
-            }
-        }
+        // loop(3) : k {
+        //     proof.a[k] = BLS12381.toMont(proof.a[k]);
+        //     proof.c[k] = BLS12381.toMont(proof.c[k]);
+        //     loop(N_1) : m {
+        //         vk.ic[m][k] = BLS12381.toMont(vk.ic[m][k]);
+        //     }
+        // }
+        // loop(3) : j {
+        //     loop(2) : k {
+        //         proof.b[j][k] = BLS12381.toMont(proof.b[j][k]);
+        //         vk.gamma[j][k] = BLS12381.toMont(vk.gamma[j][k]);
+        //         vk.delta[j][k] = BLS12381.toMont(vk.delta[j][k]);
+        //     }
+        // }
 
         // PointG1 vk_x = vkXSetup(inputs, vk.ic);
+        PointG1 vk_x = BLS12381.PtG1Zero;
 
-        // return BLS12381Pairing.pairCheck3Point(
-        //         proof.a, proof.b,
-        //         vk.millerb1a1,
-        //         vk_x, vk.gamma,
-        //         proof.c, vk.delta);
-        return true;
+        return BLS12381Pairing.pairCheck3Point(
+                proof.a, proof.b,
+                vk.millerb1a1,
+                vk_x, vk.gamma,
+                proof.c, vk.delta);
     }
 }
 
 contract ZKSNARK12381Test {
     public function testVerifyOptimized(int[ZKSNARK12381.N] inputs, Proof proof, VerifyingKey3Point vk) {
-        // require(false);
-        bytes bb = b'00';
-        loop(3) : j {
-            bb = reverseBytes(num2bin(proof.a[j], 48), 48);
-            require(true);
-        }
-        loop(3) : j {
-            loop(2) : k {
-                bb = reverseBytes(num2bin(proof.b[j][k], 48), 48);
-                require(true);
-            }
-        }
-        loop(3) : j {
-            bb = reverseBytes(num2bin(proof.c[j], 48), 48);
-            require(true);
-        }
-        loop(3) : j {
-            loop(2) : k {
-                bb = reverseBytes(num2bin(vk.gamma[j][k], 48), 48);
-                require(true);
-            }
-        }
-        loop(3) : j {
-            loop(2) : k {
-                bb = reverseBytes(num2bin(vk.delta[j][k], 48), 48);
-                require(true);
-            }
-        }
-        loop(2) : j {
-            loop(3) : k {
-                bb = reverseBytes(num2bin(vk.ic[j][k], 48), 48);
-                require(true);
-            }
-        }
-
-        require(true);
-        // require(ZKSNARK12381.verify3Point(inputs, proof, vk));
+        require(ZKSNARK12381.verify3Point(inputs, proof, vk));
     }
 
     // public function testVerify3Point() {
