@@ -19,6 +19,27 @@ contract bls12381testcase1 {
                 0
             ]];
 
+        loop(3) : k {
+            Alpha[k] = BLS12381.toMont(Alpha[k]);
+        }
+        loop(3) : j {
+            loop(2) : k {
+                Beta[j][k] = BLS12381.toMont(Beta[j][k]);
+            }
+        }
+
+        bytes aa = b'00';
+        loop(3) : j {
+            loop(2) : k {
+                aa = reverseBytes(num2bin(Beta[j][k], 48), 48);
+                require(true);
+            }
+        }
+        loop(3) : j {
+            aa = reverseBytes(num2bin(Alpha[j], 48), 48);
+            require(true);
+        }
+
         Engine bls = BLS12381Pairing.NewPairingEngine();
         bls = BLS12381Pairing.AddPair(bls, Alpha, Beta);
 
