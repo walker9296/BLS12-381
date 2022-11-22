@@ -43,7 +43,7 @@ library ZKSNARK12381 {
             }
         }
 
-        PointG1 vk_x = vkXSetup(inputs, vk.ic);
+        // PointG1 vk_x = vkXSetup(inputs, vk.ic);
 
         // return BLS12381Pairing.pairCheck3Point(
         //         proof.a, proof.b,
