@@ -1,0 +1,95 @@
+{
+    "version": 9,
+    "compilerVersion": "1.19.0+commit.72eaeba",
+    "contract": "bls12381testcase0",
+    "md5": "f092aa38ad61db5efd0af4df547f699f",
+    "structs": [
+        {
+            "name": "SortedItem",
+            "params": [
+                {
+                    "name": "item",
+                    "type": "T"
+                },
+                {
+                    "name": "idx",
+                    "type": "int"
+                }
+            ],
+            "genericTypes": [
+                "T"
+            ]
+        }
+    ],
+    "library": [
+        {
+            "name": "BLS12381",
+            "params": [],
+            "properties": [],
+            "genericTypes": []
+        }
+    ],
+    "alias": [
+        {
+            "name": "PubKeyHash",
+            "type": "Ripemd160"
+        },
+        {
+            "name": "fe",
+            "type": "int"
+        },
+        {
+            "name": "fe2",
+            "type": "int[2]"
+        },
+        {
+            "name": "fe6",
+            "type": "int[3][2]"
+        },
+        {
+            "name": "fe12",
+            "type": "int[2][3][2]"
+        },
+        {
+            "name": "fp2",
+            "type": "int[2][2]"
+        },
+        {
+            "name": "PointG1",
+            "type": "int[3]"
+        },
+        {
+            "name": "PointG2",
+            "type": "int[3][2]"
+        },
+        {
+            "name": "G1",
+            "type": "int[9]"
+        },
+        {
+            "name": "G2",
+            "type": "int[9][2]"
+        },
+        {
+            "name": "GT",
+            "type": "int[2][3][2]"
+        }
+    ],
+    "abi": [
+        {
+            "type": "function",
+            "name": "testMod",
+            "index": 0,
+            "params": []
+        },
+        {
+            "type": "constructor",
+            "params": []
+        }
+    ],
+    "stateProps": [],
+    "buildType": "debug",
+    "file": "file:///d:/bsv/zkp/BLS12-381/contracts/bls12381case0.scrypt",
+    "hex": "00005179517951795179517951795253615179517997007900a263007967517951799368517a75517a75517a75610079529c695553615179517997007900a263007967517951799368517a75517a75517a7561517a750079529c694f53615179517997007900a263007967517951799368517a75517a75517a7561517a750079529c777777777777777777",
+    "sourceMapFile": ""
+}
