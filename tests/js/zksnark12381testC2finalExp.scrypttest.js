@@ -9,7 +9,6 @@ describe('Test sCrypt contract BLS12-381 In Javascript', () => {
   let proofC, inputsC; //testcaseC
 
   before(async () => {
-    // const filePath = join(__dirname, '..', '..','out', 'zksnark12381_1miller_desc.json')
     Bls12381Test = buildContractClass(loadDesc('zksnark12381_2finalExp_desc.json'));
 
     const {Proof, VerifyingKey3Point} = buildTypeClasses(Bls12381Test);
