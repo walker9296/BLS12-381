@@ -496,7 +496,7 @@ library BLS12381 {
     }
 
     //--------------------- for finalExp()
-
+/*
     static function fp4Square(fe2 c0, fe2 c1, fe2 a0, fe2 a1) : fe2[2] {
         fe2 [9]t = G2Zero;
 
@@ -695,7 +695,7 @@ library BLS12381 {
 
         return c;
     }
-
+*/
     //--------------------- g1.go
     static function IsZeroG1(PointG1 c) : bool {
         return c[2] == 0;

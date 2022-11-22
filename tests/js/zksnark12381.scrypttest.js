@@ -6,7 +6,9 @@ const { compileContract } = require('../../helper');
 // const { join } = require('path');
 
 describe('Test sCrypt contract BLS12-381 In Javascript', () => {
-  let proof, vk, inputs, st;
+  let vk, st;
+  let proofB, inputsB; //testcaseB
+  let proofC, inputsC; //testcaseC
 
   before(async () => {
     // const filePath = join(__dirname, '..', '..','contracts', 'ZKSNARK12381.scrypt')
@@ -19,7 +21,7 @@ describe('Test sCrypt contract BLS12-381 In Javascript', () => {
 
     const {Proof, VerifyingKey3Point} = buildTypeClasses(Bls12381Test);
 
-    proof = new Proof({
+    proofB = new Proof({
       a: [new Int("3831895056398928708660383108568006083155938968635842689180675625947226281433382971663198186674312525550617185318672"),
           new Int("83158578527336401144921945868142987972391208273078865896684760946192744523793003809121038451107576228240697872144"),
           new Int(1)],
@@ -33,19 +35,33 @@ describe('Test sCrypt contract BLS12-381 In Javascript', () => {
           new Int(1)]
     });
 
+    proofC = new Proof({
+      a: [new Int("2075626938315935991723945304267293035922733530603424992662140707751157809535751306580194671145028222665057550999294"),
+          new Int("349801231889877714168434391520869664165899739671037400615525367270362278897001489973722771572997955598694464826391"),
+          new Int(1)],
+      b:[[new Int("804705963382948390049190702595951506273165232960850925305059594110325887726433361153230328730917374321775730519551"),
+          new Int("2131814829092741313787472713566757110251591015505832377029949428596206754532487192989041834673717698272353228376254")],
+         [new Int("2514433939098370582198522491336640343267109199433037592587556210201287810292076302280028801549962698379150996826239"),
+          new Int("1878603911745254906578293596026776055424702010801548121986960161715958365448257882823404444429393141329288030180034")],
+         [new Int(1), new Int(0)]],
+      c: [new Int("2982073455340243844492713124439798269378951970406958046697300287252159292488377090651785663612739730173210415163600"),
+          new Int("2721711788688008614620995843079331824456717610246977640633535595439745273317247676475893752906127802445202203120888"),
+          new Int(1)]
+    });
+
     millerb1a1 = [
-     [[new Int("0x0d258b63ba0981f1cbebb1554fbc7fe89ab4f0b101806933a1d731ca080fb7a6cfee95732cba77424abb280071226de4"),
-       new Int("0x14bf240db99d29341394392770aded00dbf2662a271bc163c41704e63eec2bc771fe9e25344f64b6e060579e05e00580")],
-      [new Int("0x0478f8b28c7116ff6185664189e99655e622fdbbb69d33c52918da606f553a569526b11a1c6dea0a00ce281be6632d47"),
-       new Int("0x184ccc77865e21aa393fdd1dfb6229b251ea24d4eb2851a19e8f538dd2f1c522b4d004ef31b19b9af579b0eb784abec6")],
-      [new Int("0x14efd9635992150dba7d54aca39d07e318843bfa1d596ffe514b75e323432c37e4dd20245d51398db49ef2412d8ded6f"),
-       new Int("0x15e83e15b79eddd6f312c949791245c3126fab928feef126978fa70549a40432854208c98bb469c9c7a8e6439aa94f70")]],
-     [[new Int("0x0e5e66eaf22062a3b94fe1955f860cbc1314fac72e2fc4aef01c735e53363325a59317c802a9c058c99a304b728735a5"),
-       new Int("0x18f689c462ecf2671778803debe5940d0cda859e9050606be72b121a9bf8e74f55537bf1922865b671804ac035649901")],
-      [new Int("0x0fc7d8839abe8f5b1d9cffff9995232048262ce8f7e32984f97240945c14a480394e9ba2353030b31d6a2482eb06c952"),
-       new Int("0x13bcacdb3b890edad423fec7aa492671421e30434ed983a5213ae41efda89d16ba1861195c04ebbc2dfb4ba0a2e0d138")],
-      [new Int("0x17ab368dc7ed26f3022bdd62397197e1d54592ea1af41ae389e4d0654fcf5a051e56b42f4804c7dad2394753e7dbd23d"),
-       new Int("0x17d9e575ccba87862ba8cecf426a303e86a39731fcbed42f163853e7a1c9e35317d11221dbe9208f4d8f5b98cd4bf895")]],
+     [[new Int("0x0c59c2364b4dd46230857e71738f4bc38f984f87cdd8de9b4d8a38aebf939aa8f7c09b046c800694f4b1be84a25ada2c"),
+       new Int("0x0d79fcde49bde6cffc46a38255dcb205b0f0336579393a93cdefddb1d778e6dc310be5e0019df7fa5ca9e8ee7d3eb191")],
+      [new Int("0x18f755733667140065f55bf3458e93dabc8809cb94a70d18f4bad0e39f328bd0fc7ae380f411efc4cd3871c3bfbd8418"),
+       new Int("0x050777d588165bd4e7b6f0b8bab2fcb7a6b6f1f2532b312a6affceb34f12eab2c0b0aa71b4f0be0273dc36b6875c3889")],
+      [new Int("0x0845cdf2351b0602a5adf1a9381722d7e17646fa068d034f21ab0cddfe7d8b342fdc86a4ce09b3fc0dd74e8b7140d1e8"),
+       new Int("0x17660d1ec5ad8667e15a8b009f92e4e52274e4de9e5e58a294f2b74913c8247953a4b15569fcb29fd7d0be0605eb4920")]],
+     [[new Int("0x0c9388771bc784c1c0f4037c6cfc2c8fc98f205919077b8626b3cbbc93bd32dff748249c0922eb4d9ca4c726956efa87"),
+       new Int("0x107d2588c4013f59d4c4982f17ebf339c7c60cc4f505bee58f9cfcf678eff384f3d17ba07a364e0a1fc7ac44fd1adb64")],
+      [new Int("0x0304b4ecf29d9161c8cd082d89de079db14081dc887904a597ea0d0ee6d53bc2fb21a6ebde0af70b716e9aace45c7897"),
+       new Int("0x074f13f218e72a02721f319b2963fffc800fd788a3f0f78441f698c77e32ac26bc79fca061a4752ee38f95d69dbab7bc")],
+      [new Int("0x0358a87a839d8a39fbba10f2e3caee0c5545a031b570f4e7189602575ecc3a3a1c9b295efae239f3858fb2c8d2e53b76"),
+       new Int("0x079fcb16a9fe59ec5e4409fe730ae13e37d6a1de63df93cd812f94d190eccc16cc8eb13a52573c7811e1383b70fcf11e")]],
     ];
 
     vk = new VerifyingKey3Point({
@@ -68,7 +84,8 @@ describe('Test sCrypt contract BLS12-381 In Javascript', () => {
                new Int(1)]]
     })
 
-    inputs = [new Int("13221")];
+    inputsB = [new Int(13221)];
+    inputsC = [new Int(8)];
         
     st = new Bls12381Test();
   });
@@ -78,8 +95,13 @@ describe('Test sCrypt contract BLS12-381 In Javascript', () => {
   //   expect(result.success, result.error).to.be.true
   // });
 
-  it('testcaseB Verify3Point should return true', () => {
-    result = st.testVerifyOptimized(inputs, proof, vk).verify();
+  // it('testcaseB Verify3Point should return true', () => {
+  //   result = st.testVerifyOptimized(inputsB, proofB, vk).verify();
+  //   expect(result.success, result.error).to.be.true
+  // });
+
+  it('testcaseC Verify3Point should return true', () => {
+    result = st.testVerifyOptimized(inputsC, proofC, vk).verify();
     expect(result.success, result.error).to.be.true
   });
 
