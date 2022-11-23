@@ -1,4 +1,4 @@
-# BLS12-381 library for BitcoinSV smart contract
+# BLS12-381 library for BitcoinSV Smart Contract
 [sCrypt](https://github.com/sCrypt-Inc/boilerplate) library of BLS12-381 Zero-Knowledge Proofs support.
 
 
@@ -9,7 +9,7 @@
 
 ## 2. How to run locally
 1. Run `npm install` to install deps
-2. Run testcase from VSCode GUI, select `testcase0.scrypttest.js` file, at file edit window click mouse right button, select menu `Run sCrypt Test`
+2. Run testcase from VSCode GUI, select `testcase0.scrypttest.js` file, right mouse button click at file edit window, select menu `Run sCrypt Test`
 
 ## 3. Library and API
 ### 3.1 Library
@@ -33,17 +33,35 @@ static function pairCheck3Point(
 ```
 
 #### function parameter(3-pairs and 1 preCompute-pair)：
-- a0 : A, b0 : B
-- millerb1a1 : preCompute miller(α, β)
-- a2 : L, b2 : ϒ
-- a3 : C, b3 : δ
+- a0 : ***A***, b0 : ***B***
+- millerb1a1 : preCompute miller(***α***, ***β***)
+- a2 : ***L***, b2 : ***ϒ***
+- a3 : ***C***, b3 : ***δ***
 
-#### formula ![formula](https://github.com/walker9296/BLS12-381/blob/main/res/formula.png)
+| PointG1 | PointG2 |
+| ------- | ------- |
+| a0  | b0  |
+| a1  | b1  |
+| a2  | b2  |
+| a3  | b3  |
+
+| PointG1 | PointG2 |
+| ------- | ------- |
+| ***A***  | ***B***  |
+| ***α***  | ***β***  |
+| ***L***  | ***ϒ***  |
+| ***C***  | ***δ***  |
+#### verifying formula： ![formula](https://github.com/walker9296/BLS12-381/blob/main/res/formula.png)
 
 ### 3.3 Verifying Key and Proof data from snarkjs/Circom 
-snarkjs/Circom tutorial by [sCrypt.io](https://learn.scrypt.io/zh/courses/Build-a-zkSNARK-based-Battleship-Game-on-Bitcoin-630b1fe6c26857959e13e160/lessons/3/chapters/1)
+zkSNARK snarkjs/Circom tutorial by [sCrypt.io](https://learn.scrypt.io/zh/courses/Build-a-zkSNARK-based-Battleship-Game-on-Bitcoin-630b1fe6c26857959e13e160/lessons/3/chapters/1)
 
+#### ![zkSNARK](https://github.com/walker9296/BLS12-381/blob/main/res/zkSNARK.png)
+From the verification_key.json file, directly obtain the α, β, ϒ, and δ parameters, and use the ic item in it and the public inputs in the public.json file to calculate the L parameter:
+##### ![formulaL.png](https://github.com/walker9296/BLS12-381/blob/main/res/formulaL.png)
+public inputs w=(1,w_1,…,w_i) from public.json
 #### 3.3.1 verification_key.json
+
 ```json
 {
  "protocol": "groth16",
@@ -60,15 +78,15 @@ snarkjs/Circom tutorial by [sCrypt.io](https://learn.scrypt.io/zh/courses/Build-
                 ["1793381858589......", "319699776756......"],
                 ["1", "0"]],
  "vk_alphabeta_12": [
-  [["29062082199832......", "29798557291243......"],
-   ["20107026956616......", "32289268603827......"],
-   ["37794026319284......", "20272682142916......"]],
-  [["11743275386962......", "32259555688411......"],
-   ["30689582621397......", "26992620205415......"],
-   ["75601830939387......", "26615242825680......"]]],
+      [["29062082199832......", "29798557291243......"],
+       ["20107026956616......", "32289268603827......"],
+       ["37794026319284......", "20272682142916......"]],
+      [["11743275386962......", "32259555688411......"],
+       ["30689582621397......", "26992620205415......"],
+       ["75601830939387......", "26615242825680......"]]],
  "IC": [
-  ["179858356000600......", "10944984983678......", "1"],
-  ["341669953409364......", "26956794051246......", "1"]]
+      ["179858356000600......", "10944984983678......", "1"],
+      ["341669953409364......", "26956794051246......", "1"]]
 }
 ```
 #### 3.3.2 proof.json
