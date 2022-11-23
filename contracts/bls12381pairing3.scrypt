@@ -2,8 +2,7 @@ import "bls12381.scrypt";
 
 struct Pair {PointG1 g1; PointG2 g2;}
 struct Engine {
-	// Pair [3]pairs;
-	Pair [1]pairs; //rororo
+	Pair [1]pairs;
     int idxP;
 }
 
@@ -15,8 +14,7 @@ library BLS12381Pairing {
     static const bytes X = b'd201000000010000';
     static const bytes MASK = b'0000000000000001';
     static const bytes ZERO = b'0000000000000000';
-    // static const int PAIR_LEN = 3;
-    static const int PAIR_LEN = 1; //rororo
+    static const int PAIR_LEN = 1;
 
     static const fe2 [10]Fe2_10Zero = repeat(BLS12381.Fe2Zero, 10);
 
