@@ -14,6 +14,7 @@ sCrypt library of BLS12-381 Zero-Knowledge Proofs support.
 
 ## Library and API
 1. Library
+<pre>
 ├─ contracts
 │    ├─ bls12381.scrypt          # bls12-381 library
 │    ├─ bls12381pairing3.scrypt  # bls12-381 ZKP library(Optimized 3-pairs)
@@ -22,14 +23,14 @@ sCrypt library of BLS12-381 Zero-Knowledge Proofs support.
      └─ js
         ├─ testcase0.scrypttest.js     # simple testcase for quickstart
         └─ zksnark12381.scrypttest.js  # zk-SNARKs verifier API example
-
+</pre>
 2. API
 static function pairCheck3Point(
             PointG1 a0, PointG2 b0,
             fe12 millerb1a1,
             PointG1 a2, PointG2 b2,
             PointG1 a3, PointG2 b3) : bool
-![formula](https://github.com/walker9296/BLS12-381/res/formula.png)
+![formula](https://github.com/walker9296/BLS12-381/blob/main/res/formula.png)
 Parameter：
 - a0 : A, b0 : B
 - millerb1a1 : miller(α, β)
