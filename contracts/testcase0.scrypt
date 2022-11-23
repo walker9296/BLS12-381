@@ -2,7 +2,7 @@ import "bls12381.scrypt";
 
 
 contract bls12381testcase0 {
- /*
+
    public function testMod() {
         int c = BLS12381.mod(2, 3);
         require(c == 2);
@@ -23,15 +23,28 @@ contract bls12381testcase0 {
         fe e = BLS12381.fromMont(BLS12381.r1);
         require(e == 1);
 
-        fe f1 = 0x15f65ec3fa80e4935c071a97a256ec6d77ce5853705257455f48985753c758baebf4000bc40c0002760900000002fffd;
-        fe f2 = BLS12381.fromMont(BLS12381.r2);
-        require(f1 == f2);
 
         fe g1 = 0x14fec701e8fb0ce9ed5e64273c4f538b1797ab1458a88de9343ea97914956dc87fe11274d898fafbf4d38259380b4820;
         fe g2 = BLS12381.fromMont(1);
         require(g1 == g2);
     }
 
+    public function testMulScalarG1() {
+      PointG1 g1One = [
+        0x120177419e0bfb75edce6ecc21dbf440f0ae6acdf3d0e747154f95c7143ba1c17817fc679976fff55cb38790fd530c16,
+        0x0bbc3efc5008a26a0e1c8c3fad0059c051ac582950405194dd595f13570725ce8c22631a7918fd8ebaac93d50ce72271,
+        0x15f65ec3fa80e4935c071a97a256ec6d77ce5853705257455f48985753c758baebf4000bc40c0002760900000002fffd
+      ];
+      PointG1 P1 = BLS12381.MulScalarG1(g1One, 17);
+      
+      PointG1 P1Go = [0x075aff1fb61679d190f66944ed63b7fafc2739bde4425d23e512155e027f3a368b530a8f0b2fd83dabd4a4c040fa82f2,
+            0x04eec84f32538ad96d50cabcf126b0ee01134972237c50a8e2d037ebadb4fbd392daf271ab12d54d63b8aeaaf3756257,
+            0x0066f9cf1edfcebe36a5ca971bcf143156caa07e9ab1e0b5e95af33a5536e6aacbf3acb4b572ef515528db2365912299];
+      
+      require(P1 == P1Go);
+    }
+
+/*
     public function testModInverseBranchlessP() {
         fe ff2 = BLS12381.inverse(BLS12381.r1);
         fe ff1 = BLS12381.modInverseBranchlessP(BLS12381.r1);
@@ -39,12 +52,12 @@ contract bls12381testcase0 {
 
         require(ff1 == ff2);
     }
-*/
+
 
     public function testEGCD() {
         // bytes bb = b'00';
 
-        // fe ff0 = BLS12381.inverse(7);
+        // fe ff0 = BLS12381.inverse(7); //original Go function
         // fe ff1 = BLS12381.modInverseEGCD(7, BLS12381.P);
         // fe ff2 = BLS12381.mod(BLS12381.modInverseEGCD(7, BLS12381.P), BLS12381.P);
 
@@ -62,5 +75,5 @@ contract bls12381testcase0 {
         // bb = reverseBytes(num2bin(ff3, 48), 48);
         require(ff0 == ff3);
     }
-
+*/
 }
