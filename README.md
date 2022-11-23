@@ -4,11 +4,11 @@
 Curve BLS12-381 is both **pairing-friendly** (making it efficient for digital signatures) and effective for constructing **zkSnarks**.
 BLS12-381 deals with two curves, the simpler one is over the finite field $F_q$ , equation is $y^2 = x^3 + 4$, call this curve $E(F_q)$. The other curve is defined over an extension of $F_q$ to $F_(q^2)$ , the curve equation is $y^2 = x^3 + 4(1 + i)$, call the curve $E^′(F_q^2)$.
 
-A pairing is a bilinear map, it takes as input two points, each from a group of the same order r. these two groups call *** $G_1$ *** and *** $G_2$ ***.
+A pairing is a bilinear map, it takes as input two points, each from a group of the same order r. these two groups call $G_1$ and $G_2$ .
 
-BLS12-381 uses a “sextic twist”, reduces the degree of the extension field by a factor of six. So *** $G_2$ *** on the twisted curve can be defined over $F_q^2$ instead of $F_q^(12)$, which is a huge saving in complexity, doing arithmetic in $F_q^2$ is horribly complicated and inefficient.
+BLS12-381 uses a “sextic twist”, reduces the degree of the extension field by a factor of six. So $G_2$ on the twisted curve can be defined over $F_q^2$ instead of $F_q^{12}$, which is a huge saving in complexity, doing arithmetic in $F_q^2$ is horribly complicated and inefficient.
 
-if find a u such that $u^6=(1+i)^(−1)$, then can define twisting transformation as $(x, y)$ → $(x/u^2, y/u^3)$. This transforms our original curve $E:y^2 = x^3 + 4$ into the curve $E^′:y^2 = x^3 + 4/u^6 = x^3 + 4(1 + i)$. 
+if find a u such that $u^6 = (1+i)^{−1}$, then can define twisting transformation as $(x, y)$ → $(x/u^2, y/u^3)$. This transforms our original curve $E:y^2 = x^3 + 4$ into the curve $E^′:y^2 = x^3 + 4/u^6 = x^3 + 4(1 + i)$. 
 
 The security target is 128 bits
 
