@@ -2,7 +2,7 @@ import "bls12381.scrypt";
 
 
 contract bls12381testcase0 {
-/*
+ /*
    public function testMod() {
         int c = BLS12381.mod(2, 3);
         require(c == 2);
@@ -11,7 +11,7 @@ contract bls12381testcase0 {
         c = BLS12381.mod(-1, 3);
         require(c == 2);
     }
- 
+
     public function testToMont_FromMont() {
         fe a0 = 0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaaa;
         fe a1 = 0x040ab3263eff0206ef148d1ea0f4c069eca8f3318332bb7a07e83a49a2e99d6932b7fff2ed47fffd43f5fffffffcaaae;
@@ -31,13 +31,36 @@ contract bls12381testcase0 {
         fe g2 = BLS12381.fromMont(1);
         require(g1 == g2);
     }
-*/
-    public function testP() {
+
+    public function testModInverseBranchlessP() {
         fe ff2 = BLS12381.inverse(BLS12381.r1);
         fe ff1 = BLS12381.modInverseBranchlessP(BLS12381.r1);
-        // require(ff1 == 0x15f65ec3fa80e4935c071a97a256ec6d77ce5853705257455f48985753c758baebf4000bc40c0002760900000002fffd);
+        require(ff1 == 0x15f65ec3fa80e4935c071a97a256ec6d77ce5853705257455f48985753c758baebf4000bc40c0002760900000002fffd);
 
         require(ff1 == ff2);
+    }
+*/
+
+    public function testEGCD() {
+        // bytes bb = b'00';
+
+        // fe ff0 = BLS12381.inverse(7);
+        // fe ff1 = BLS12381.modInverseEGCD(7, BLS12381.P);
+        // fe ff2 = BLS12381.mod(BLS12381.modInverseEGCD(7, BLS12381.P), BLS12381.P);
+
+        fe ff0 = BLS12381.inverse(77777777777777);
+        // bytes bb = reverseBytes(num2bin(ff0, 48), 48);
+        fe ff0a = BLS12381.fromMont(ff0);
+        // bb = reverseBytes(num2bin(ff0a, 48), 48);
+        require(BLS12381.fromMont(BLS12381.mod(ff0a * 77777777777777, BLS12381.P)) == 1);
+
+        fe ff1 = BLS12381.modInverseEGCD(77777777777777, BLS12381.P);
+        // bb = reverseBytes(num2bin(ff1, 48), 48);
+        require(BLS12381.mod(ff1 * 77777777777777, BLS12381.P) == 1);
+        fe ff3 = BLS12381.toMont(ff1);
+        ff3 = BLS12381.toMont(ff3);
+        // bb = reverseBytes(num2bin(ff3, 48), 48);
+        require(ff0 == ff3);
     }
 
 }
