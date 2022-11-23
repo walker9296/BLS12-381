@@ -1,7 +1,6 @@
 # BLS12-381 library for BitcoinSV smart contract
-sCrypt library of BLS12-381 Zero-Knowledge Proofs support.
+[sCrypt](https://github.com/sCrypt-Inc/boilerplate) library of BLS12-381 Zero-Knowledge Proofs support.
 
-[sCrypt projet](https://github.com/sCrypt-Inc/boilerplate)
 
 ## Prerequisites
 1. [Visual Studio Code](https://code.visualstudio.com/download)
@@ -13,7 +12,7 @@ sCrypt library of BLS12-381 Zero-Knowledge Proofs support.
 2. Run testcase from VSCode GUI, select `testcase0.scrypttest.js` file, at file edit window click mouse right button, select menu `Run sCrypt Test`
 
 ## Library and API
-1. Library
+### Library
 <pre>
 ├─ contracts
 │    ├─ bls12381.scrypt          # bls12-381 library
@@ -24,7 +23,7 @@ sCrypt library of BLS12-381 Zero-Knowledge Proofs support.
         ├─ testcase0.scrypttest.js     # simple testcase for quickstart
         └─ zksnark12381.scrypttest.js  # zk-SNARKs verifier API example
 </pre>
-2. API
+### API
 ```js
 static function pairCheck3Point(
             PointG1 a0, PointG2 b0,
@@ -33,18 +32,18 @@ static function pairCheck3Point(
             PointG1 a3, PointG2 b3) : bool
 ```
 
-Parameter(3-pairs and 1 preCompute-pair)：
+#### Parameter(3-pairs and 1 preCompute-pair)：
 - a0 : A, b0 : B
 - millerb1a1 : preCompute miller(α, β)
 - a2 : L, b2 : ϒ
 - a3 : C, b3 : δ
 
-![formula](https://github.com/walker9296/BLS12-381/blob/main/res/formula.png)
+#### ![formula](https://github.com/walker9296/BLS12-381/blob/main/res/formula.png)
 
-3. Verifying Key and Proof data from snarkjs/Circom 
-<pre>
+### Verifying Key and Proof data from snarkjs/Circom 
 snarkjs/Circom tutorial from [sCrypt.io](https://learn.scrypt.io/zh/courses/Build-a-zkSNARK-based-Battleship-Game-on-Bitcoin-630b1fe6c26857959e13e160/lessons/3/chapters/1)
-verification_key.json</pre>
+
+#### verification_key.json
 ```json
 {
  "protocol": "groth16",
@@ -141,7 +140,7 @@ verification_key.json</pre>
  ]
 }
 ```
-<pre>proof.json</pre>
+#### proof.json
 ```json
 {
  "pi_a": [
