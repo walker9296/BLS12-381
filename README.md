@@ -38,28 +38,22 @@ static function pairCheck3Point(
 - a2 : ***L***, b2 : ***ϒ***
 - a3 : ***C***, b3 : ***δ***
 
-| PointG1 | PointG2 |
-| ------- | ------- |
-| a0  | b0  |
-| a1  | b1  |
-| a2  | b2  |
-| a3  | b3  |
+| PointG1 | PointG2 | | PointG1 | PointG2 |
+| ------- | ------- | | ------- | ------- |
+| a0  | b0  | | ***A***  | ***B***  |
+| a1  | b1  || ***α***  | ***β***  |
+| a2  | b2  || ***L***  | ***ϒ***  |
+| a3  | b3  || ***C***  | ***δ***  |
 
-| PointG1 | PointG2 |
-| ------- | ------- |
-| ***A***  | ***B***  |
-| ***α***  | ***β***  |
-| ***L***  | ***ϒ***  |
-| ***C***  | ***δ***  |
 #### verifying formula： ![formula](https://github.com/walker9296/BLS12-381/blob/main/res/formula.png)
 
 ### 3.3 Verifying Key and Proof data from snarkjs/Circom 
 zkSNARK snarkjs/Circom tutorial by [sCrypt.io](https://learn.scrypt.io/zh/courses/Build-a-zkSNARK-based-Battleship-Game-on-Bitcoin-630b1fe6c26857959e13e160/lessons/3/chapters/1)
 
 #### ![zkSNARK](https://github.com/walker9296/BLS12-381/blob/main/res/zkSNARK.png)
-From the verification_key.json file, directly obtain the α, β, ϒ, and δ parameters, and use the ic item in it and the public inputs in the public.json file to calculate the L parameter:
+From the verification_key.json file, directly obtain the ***α***, ***β***, ***ϒ***, and ***δ*** parameters, and use the ***ic*** item in it and the public inputs in the public.json file to calculate the ***L*** parameter:
 ##### ![formulaL.png](https://github.com/walker9296/BLS12-381/blob/main/res/formulaL.png)
-public inputs w=(1,w_1,…,w_i) from public.json
+public inputs ***w*** = (1,***w1***,…,***wi***) from public.json
 #### 3.3.1 verification_key.json
 
 ```json
@@ -100,4 +94,10 @@ public inputs w=(1,w_1,…,w_i) from public.json
  "protocol": "groth16",
  "curve": "bls12381"
 }
+```
+#### 3.3.3 public.json
+```json
+[
+ "91"
+]
 ```
