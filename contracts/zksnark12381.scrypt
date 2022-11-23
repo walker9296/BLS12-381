@@ -42,8 +42,8 @@ library ZKSNARK12381 {
         //         vk.delta[j][k] = BLS12381.toMont(vk.delta[j][k]);
         //     }
         // }
-
         // PointG1 vk_x = vkXSetup(inputs, vk.ic);
+
         PointG1 vk_x = BLS12381.PtG1Zero;
 
         return BLS12381Pairing.pairCheck3Point(

@@ -21,7 +21,7 @@ library BLS12381Pairing {
     static const fe2 [10]Fe2_10Zero = repeat(BLS12381.Fe2Zero, 10);
 
     //--------------------- pairing.go
-
+/*
     static function NewPairingEngine() : Engine {
         Pair [PAIR_LEN]pairs = [{BLS12381.PtG1Zero, BLS12381.Fe6Zero}];
         return {pairs, 0};
@@ -34,7 +34,7 @@ library BLS12381Pairing {
     static function affinePair(Pair p) : Pair {
         return {BLS12381.AffineG1(p.g1), BLS12381.AffineG2(p.g2)};
     }
-/*
+
     static function AddPair(Engine eng, PointG1 g1, PointG2 g2) : Engine {
         if(isZeroPair({g1, g2}) == false) {
             Pair pr = affinePair({g1, g2});
@@ -251,10 +251,10 @@ library BLS12381Pairing {
             fe12 millerb1a1,
             PointG1 a2, PointG2 b2,
             PointG1 a3, PointG2 b3) : bool {
-
+/*
         Engine eng = NewPairingEngine();
 
-/*        fe12 f2 = BLS12381.Fe12Zero;
+        fe12 f2 = BLS12381.Fe12Zero;
         fe12 f3 = BLS12381.Fe12Zero;
         fe12 f0 = BLS12381.Fe12Zero;
         fe12 acc = BLS12381.Fe12Zero;
@@ -334,6 +334,5 @@ library BLS12381Pairing {
 
         return BLS12381.isOneFe12(acc);
     }
-
 }
 
