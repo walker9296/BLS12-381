@@ -1,5 +1,5 @@
-# BLS12-381 library for BitcoinSV Smart Contract
-[sCrypt](https://github.com/sCrypt-Inc/boilerplate) Library of BLS12-381 Zero-Knowledge Proofs support.
+# BLS12-381 library for BitcoinSV
+[sCrypt](https://github.com/sCrypt-Inc/boilerplate) BLS12-381 Library for BitcoinSV Zero-Knowledge Proofs Smart Contract support.
 
 For platform-agnostic applications, the choice requires a tradeoff between performance (BN254) and security (BLS12-381). We recommend choosing BLS12-381 as it is more secure, still fast enough to be practical, but slower than BN254. 
 
@@ -8,9 +8,10 @@ Reference:
 - [Efficient zk-SNARKs on Bitcoin: Technical Explainer](https://xiaohuiliu.medium.com/efficient-zk-snarks-on-bitcoin-technical-explainer-880fa04ee155)
 - [BLS12-381 For The Rest Of Us](https://hackmd.io/@benjaminion/bls12-381)
 
+## 1. Curve BLS12-381
 Curve BLS12-381 is both **pairing-friendly** (making it efficient for digital signatures) and effective for constructing **zkSnarks**. The security target of BLS12-381 is 128 bits.
 
-### The curves
+### 1.1 The curves
 BLS12-381 deals with two curves, 
 - the simpler one is over the finite field $F_q$ , equation is<br>
 $y^2 = x^3 + 4$, call this curve $E(F_q)$
@@ -19,38 +20,61 @@ $y^2 = x^3 + 4(1 + i)$, call this curve $E^′(F_{q^2})$.
 
 A pairing is a bilinear map, it takes as input two points, each from a group of the same order r. these two groups call $G_1$ and $G_2$ .
 
-### Twists
+### 1.2 Twists
 BLS12-381 uses a twist, reduces the degree of the extension field by a factor of six. So $G_2$ on the twisted curve can be defined over $F_{q^2}$ instead of $F_{q^{12}}$ , which is a huge saving in complexity, doing arithmetic in $F_{q^{12}}$ is horribly complicated and inefficient.
 
 Find a u such that $u^6 = (1+i)^{−1}$, 
-then can define twisting transformation as<br>
-&emsp; $(x, y)$ → $(x/u^2, y/u^3)$<br>
-This transforms original curve<br>
-&emsp; $E:y^2 = x^3 + 4$<br>
-into the curve<br>
-&emsp; $E^′:y^2 = x^3 + 4/u^6 = x^3 + 4(1 + i)$.
+then can define twisting transformation as
+$$(x, y)$ → $(x/u^2, y/u^3)$$
+This transforms original curve
+$$E:y^2 = x^3 + 4$$
+into the curve
+$$E^′:y^2 = x^3 + 4/u^6 = x^3 + 4(1 + i)$$
 
 So these are the two groups we will be using:
 - $G_1 ⊂ E(F_q)$ where $E:y^2 = x^3 + 4$
 - $G_2 ⊂ E(F_{q^2})$ where $E^′:y^2 = x^3 + 4/u^6 = x^3 + 4(1 + i)$
 
-### Final exponentiation
-Calculation of a pairing has two parts: the Miller loop and the final exponentiation. Both are quite expensive, but there’s a nice hack can reduce the impact of the final exponentiation.
+### 1.3 Efficient Pairing
+Calculation of a pairing has two parts: 
+- Miller loop: compute an intermediate function of the two input points $f(pointG1, pointG2)$ recursively
+- Final exponentiation: raise f to a large power c
 
-### Coordinate systems
+equation 1:
+$$e(pointG1, pointG2) = f(pointG1, pointG2)^c$$
+where $c = (q^{12} - 1)/r$
+Both are quite expensive, but there’s a nice hack can reduce the impact of both of them.
+
+#### 1.3.1 Reduce to 3 pairings
+verifying equation 2：
+$$e(A, B) = e(α, β) * e(L, ϒ) * e(C, δ)$$
+where α and β are known at setup, so we can precompute the second pairing and replace α and β with it as part of the verification key, saving one pairing.
+
+#### 1.3.2 One single final exponentiation
+Eq.2 can be rewritten as:
+$$e(α, β) * e(L, ϒ) * e(C, δ) * e(A, B)^{-1} = 1$$
+e is bilinear，move the exponent (-1) into the bracket.
+$$e(α, β) * e(L, ϒ) * e(C, δ) * e(-A, B) = 1$$
+Plugging in Eq.1, we get:
+$$(f(α, β) * f(L, ϒ) * f(C, δ) * f(-A, B))^c = 1$$
+Instead of calculating final exponentiation 4 times, which are computationally intensive, we only have to do it once in the end.
+
+Note that, the output file verification_key.json from snarkjs/circom, there is a "vk_alphabeta_12" item precomputed, but you can't use it for precomputed $f(α, β)$, this data is calculated by miller loop and finanl exponentiation($f(α, β)^c$).
+
+### 1.4 Coordinate systems
 Finding the inverse of a field element is an expensive operation, so implementations of elliptic curve arithmetic try to avoid it as much as possible. 
 
-#### Affine coordinates
+#### 1.4.1 Affine coordinates
 Affine coordinates are the traditional representation of points with just an $(x, y)$ pair of coordinates, where x and y satisfy the curve equation. This is what we normally use when storing and transmitting points.
 
 The basic idea is to represent the coordinate using notional fractions, reducing the number of actual division operations needed. To do this, a third coordinate is introduced and use $(X, Y, Z)$ for the internal representation of a point. 
-#### Jacobian coordinates
-The Jacobian point $(X, Y, Z)$ represents the Affine point $(X/Z^2, Y/Z^3)$. The curve equation becomes<br>
-&emsp; $Y^2 = X^3 + 4Z^6$
+#### 1.4.2 Jacobian coordinates
+The Jacobian point $(X, Y, Z)$ represents the Affine point $(X/Z^2, Y/Z^3)$. The curve equation becomes
+$$Y^2 = X^3 + 4Z^6$$
 
 Note that, the easiest way to import the Affine point $(x, y)$ is to map it to $(x, y, 1)$.
 
-### Montgomery form
+### 1.5 Montgomery form
 A way to calculate modulo that doesn't require division is the so-called Montgomery multiplication. To calculate the modular multiplication operation,
 1. convert the multiplier into Montgomery form,
 2. use Montgomery multiplication,
@@ -58,17 +82,17 @@ A way to calculate modulo that doesn't require division is the so-called Montgom
 
 although this process is more complicated, for the operation of calculating a large number of modular multiplications, it is only the initial process of entering and exiting the Montgomery form, but each calculation of Montgomery multiplication in the middle is faster than calculating the ordinary modular multiplication Save a lot of time by multiplying.
 
-## 1. Prerequisites
-1. [Visual Studio Code](https://code.visualstudio.com/download)
-2. [VSCode Extension sCrypt IDE](https://scrypt-ide.readthedocs.io/en/latest/index.html) search sCrypt in the VS Code extensions marketplace
-3. [Node.js ](https://nodejs.org/en/download/) require version >= 12
+## 2. Prerequisites
+- [Visual Studio Code](https://code.visualstudio.com/download)
+- [VSCode Extension sCrypt IDE](https://scrypt-ide.readthedocs.io/en/latest/index.html) search sCrypt in the VS Code extensions marketplace
+- [Node.js ](https://nodejs.org/en/download/) require version >= 12
 
-## 2. How to run locally
+## 3. How to run locally
 1. Run `npm install` to install deps
 2. Run testcase from VSCode GUI, select `testcase0.scrypttest.js` file, right mouse button click at file edit window, select menu `Run sCrypt Test`
 
-## 3. Library and API
-### 3.1 Library
+## 4. Library and API
+### 4.1 Library
 <pre>
 ├─ contracts
 │    ├─ bls12381.scrypt          # bls12-381 library
@@ -79,7 +103,7 @@ although this process is more complicated, for the operation of calculating a la
         ├─ testcase0.scrypttest.js     # simple testcase for quickstart
         └─ zksnark12381.scrypttest.js  # zk-SNARKs verifier API example
 </pre>
-### 3.2 API
+### 4.2 API
 ```js
 static function pairCheck3Point(
             PointG1 a0, PointG2 b0,
@@ -100,16 +124,16 @@ parameter(3-pairs and 1 preCompute-pair)：
 | a2  | b2  | ***L***  | ***ϒ***  |
 | a3  | b3  | ***C***  | ***δ***  |
 
-verifying formula：<br>
-&emsp; $e(A, B) = e(α, β) * e(L, ϒ) * e(C, δ)$
-### 3.3 Verifying Key and Proof data from snarkjs/Circom 
+verifying equation ：
+$$e(A, B) = e(α, β) * e(L, ϒ) * e(C, δ)$$
+### 4.3 Verifying Key and Proof data from snarkjs/Circom 
 You can find azkSNARK snarkjs/Circom tutorials by [sCrypt.io](https://learn.scrypt.io/zh/courses/Build-a-zkSNARK-based-Battleship-Game-on-Bitcoin-630b1fe6c26857959e13e160/lessons/3/chapters/1)
 
 #### ![zkSNARK](https://github.com/walker9296/BLS12-381/blob/main/res/zkSNARK.png)
-From the `proof.json` file, obtain the ***A***, ***B***, ***C*** parameters, and from the `verification_key.json` file, obtain the ***α***, ***β***, ***ϒ***, ***δ*** parameters, use the ***ic*** item and the public inputs from the `public.json` file to calculate the ***L*** parameter:<br>
-$$L = \sum_{i=0}^l w_i*IC_i$$
+From the `proof.json` file, obtain the ***A***, ***B***, ***C*** parameters, and from the `verification_key.json` file, obtain the ***α***, ***β***, ***ϒ***, ***δ*** parameters, use the ***ic*** item and the public inputs from the `public.json` file to calculate the ***L*** parameter:
+$$L = \sum_{i=0}^n w_i*IC_i$$
 where public inputs $w = (1, w_1, …, w_i)$
-#### 3.3.1 verification_key.json
+#### 4.3.1 verification_key.json
 ```json
 {
  "protocol": "groth16",
@@ -137,7 +161,7 @@ where public inputs $w = (1, w_1, …, w_i)$
       ["341669953409364......", "26956794051246......", "1"]]
 }
 ```
-#### 3.3.2 proof.json
+#### 4.3.2 proof.json
 ```json
 {
  "pi_a": ["386406607244204......", "3355814159298......", "1"],
@@ -149,7 +173,7 @@ where public inputs $w = (1, w_1, …, w_i)$
  "curve": "bls12381"
 }
 ```
-#### 3.3.3 public.json
+#### 4.3.3 public.json
 ```json
 [
  "91"
