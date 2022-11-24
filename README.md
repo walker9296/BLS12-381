@@ -2,30 +2,38 @@
 [sCrypt](https://github.com/sCrypt-Inc/boilerplate) Library of BLS12-381 Zero-Knowledge Proofs support.
 
 Curve BLS12-381 is both **pairing-friendly** (making it efficient for digital signatures) and effective for constructing **zkSnarks**.
+
+The security target is 128 bits.
+
+### The curves
 BLS12-381 deals with two curves, the simpler one is over the finite field $F_q$ , equation is $y^2 = x^3 + 4$, call this curve $E(F_q)$. The other curve is defined over an extension of $F_q$ to $F_{q^2}$ , the curve equation is $y^2 = x^3 + 4(1 + i)$, call the curve $E^′(F_{q^2})$.
 
 A pairing is a bilinear map, it takes as input two points, each from a group of the same order r. these two groups call $G_1$ and $G_2$ .
 
-BLS12-381 uses a “sextic twist”, reduces the degree of the extension field by a factor of six. So $G_2$ on the twisted curve can be defined over $F_{q^2}$ instead of $F_{q^12}$, which is a huge saving in complexity, doing arithmetic in $F_{q^2}$ is horribly complicated and inefficient.
+### Twists
+BLS12-381 uses a “sextic twist”, reduces the degree of the extension field by a factor of six. So $G_2$ on the twisted curve can be defined over $F_{q^2}$ instead of $F_{q^{12}}$, which is a huge saving in complexity, doing arithmetic in $F_{q^2}$ is horribly complicated and inefficient.
 
-if find a u such that $u^6 = (1+i)^{−1}$, then can define twisting transformation as $(x, y)$ → $(x/u^2, y/u^3)$. This transforms our original curve $E:y^2 = x^3 + 4$ into the curve $E^′:y^2 = x^3 + 4/u^6 = x^3 + 4(1 + i)$. 
+if find a u such that $u^6 = (1+i)^{−1}$, then can define twisting transformation as $(x, y)$ → $(x/u^2, y/u^3)$. This transforms original curve $E:y^2 = x^3 + 4$ into the curve $E^′:y^2 = x^3 + 4/u^6 = x^3 + 4(1 + i)$. 
 
-The security target is 128 bits
+So these are the two groups we will be using:
 
-Final exponentiation
-Calculation of a pairing has two parts: the Miller loop and the final exponentiation. Both are quite expensive, but there’s a nice hack you can do to reduce the impact of the final exponentiation.
+- $G_1 ⊂ E(F_q)$ where $E:y^2 = x^3 + 4$
+- $G_2 ⊂ E(F_{q^2})$ where $E^′:y^2 = x^3 + 4/u^6 = x^3 + 4(1 + i)$
 
-Standard Projective coordinates
-The Standard Projective coordinate point $(X, Y, Z)$ represents the Affine coordinate point $(X/Z, Y/Z)$.
+### Final exponentiation
+Calculation of a pairing has two parts: the Miller loop and the final exponentiation. Both are quite expensive, but there’s a nice hack can reduce the impact of the final exponentiation.
 
-These are also called homogeneous projective coordinates because the curve equation takes on the homogeneous form $Y^2Z = X^3 + 4Z^3$ . Points become straight lines through the origin in $(X, Y, Z)$ space, with the Affine point being the intersection of the line with the plane $Z = 1$. Figure 2.10 in PfB gives a nice illustration.
+### Coordinate systems
+Finding the inverse of a field element (i.e. division) is an expensive operation, so implementations of elliptic curve arithmetic try to avoid it as much as possible. 
 
-Jacobian coordinates
-A different kind of projective coordinates are Jacobian coordinates. In this scheme, the Jacobian point $(X, Y, Z)$ represents the Affine point $(X/Z^2,Y/Z^3)$. The curve equation becomes $Y^2 = X^3 + 4Z^6$.
+#### ffine coordinates
+Affine coordinates are the traditional representation of points with just an (x,y) pair of coordinates, where x and y satisfy the curve equation. This is what we normally use when storing and transmitting points.
 
-The sample code for the constant-time hash-to-curve uses Jacobian coordinates under the hood.
+The basic idea is to represent the coordinate using notional fractions, reducing the number of actual division operations needed. To do this, a third coordinate is introduced and use (X,Y,Z) for the internal representation of a point. 
+#### Jacobian coordinates
+The Jacobian point $(X, Y, Z)$ represents the Affine point $(X/Z^2,Y/Z^3)$. The curve equation becomes $Y^2 = X^3 + 4Z^6$.
 
-Note that, in both schemes, the easiest way to import the Affine point $(x, y)$ is to map it to $(x, y, 1)$.
+Note that, the easiest way to import the Affine point $(x, y)$ is to map it to $(x, y, 1)$.
 
 ## 1. Prerequisites
 1. [Visual Studio Code](https://code.visualstudio.com/download)
