@@ -59,7 +59,7 @@ Plugging in Eq.1, we get:
 $$(f(α, β) * f(L, ϒ) * f(C, δ) * f(-A, B))^c = 1$$
 Instead of calculating final exponentiation 4 times, which are computationally intensive, we only have to do it once in the end.
 
-Note that, the output file of `verification_key.json` from ***snarkjs/circom***, there is a `vk_alphabeta_12` item precomputed, but you can't use it for precomputed $f(α, β)$, this data is calculated by miller loop and finanl exponentiation( $f(α, β)^c$ ). You can run 
+Note that, the output file of `verification_key.json` from ***snarkjs/circom***, there is a `vk_alphabeta_12` item precomputed, but you can't use it for precomputed $f(α, β)$, this data is calculated by miller loop and finanl exponentiation $f(α, β)^c$ . You can run 
 `testcase1.scrypt` contract in debug mode to get precomputed $f(α, β)$ data.
 
 ### 1.4 Coordinate systems
@@ -84,8 +84,8 @@ A way to calculate modulo that doesn't require division is the so-called Montgom
 although this process is more complicated, for the operation of calculating a large number of modular multiplications, it is only the initial process of entering and exiting the Montgomery form, but each calculation of Montgomery multiplication in the middle is faster than calculating the ordinary modular multiplication Save a lot of time by multiplying.
 
 ## 2. Prerequisites
-- [Visual Studio Code](https://code.visualstudio.com/download)
-- [VSCode Extension sCrypt IDE](https://scrypt-ide.readthedocs.io/en/latest/index.html) search sCrypt in the VSC extensions marketplace
+- [Visual Studio Code(VSC)](https://code.visualstudio.com/download)
+- [VSC Extension sCrypt IDE](https://scrypt-ide.readthedocs.io/en/latest/index.html) search sCrypt in the VSC extensions marketplace
 - [Node.js ](https://nodejs.org/en/download/) require version >= 12
 
 ## 3. How to run locally
@@ -129,6 +129,15 @@ verifying equation ：
 $$e(A, B) = e(α, β) * e(L, ϒ) * e(C, δ)$$
 ### 4.3 Verifying Key and Proof data from snarkjs/Circom 
 You can find zkSNARK snarkjs/Circom tutorials by [sCrypt.io](https://learn.scrypt.io/zh/courses/Build-a-zkSNARK-based-Battleship-Game-on-Bitcoin-630b1fe6c26857959e13e160/lessons/3/chapters/1)
+
+You need to select the `bls12381` curve when executing the ***snarkjs/Circom*** command, because the default is the `bn128` curve.
+E.g,
+- compile circuit
+`circom ../work_circom/factor.circom --r1cs --wasm --prime bls12381`
+- Start a new powers of tau ceremony
+`snarkjs powersoftau new bls12-381 12 pot12_0000.ptau`
+
+Then you can have `"curve": "bls12381"` in the output `verification_key.json` and `proof.json` files instead of `"curve": "bn128"`
 
 #### ![zkSNARK](https://github.com/walker9296/BLS12-381/blob/main/res/zkSNARK.png)
 From the `proof.json` file obtain the ***A***, ***B***, ***C*** parameters, and from the `verification_key.json` file obtain the ***α***, ***β***, ***ϒ***, ***δ*** parameters, use the ***ic*** item and the public inputs from the `public.json` file to calculate the ***L*** parameter:
