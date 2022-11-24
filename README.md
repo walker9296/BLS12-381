@@ -130,7 +130,7 @@ $$e(A, B) = e(α, β) * e(L, ϒ) * e(C, δ)$$
 ### 4.3 Verifying Key and Proof data from snarkjs/Circom 
 You can find zkSNARK snarkjs/Circom tutorials by [sCrypt.io](https://learn.scrypt.io/zh/courses/Build-a-zkSNARK-based-Battleship-Game-on-Bitcoin-630b1fe6c26857959e13e160/lessons/3/chapters/1)
 
-You need to select the `bls12381` curve command line option when executing the ***snarkjs/Circom*** command, because the default is the `bn128` curve.
+You need to select the ***bls12381*** curve command line option when executing the ***snarkjs/Circom*** command, because the default is the `bn128` curve.
 E.g,
 - when compile circuit<br>
 `circom ../work_circom/factor.circom --r1cs --wasm --prime bls12381`
