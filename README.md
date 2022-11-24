@@ -1,5 +1,5 @@
 # BLS12-381 library for BitcoinSV
-[sCrypt](https://github.com/sCrypt-Inc/boilerplate) BLS12-381 Library for BitcoinSV Zero-Knowledge Proofs Smart Contract support.
+[sCrypt](https://github.com/sCrypt-Inc/boilerplate) BLS12-381 Library for Bitcoin Zero-Knowledge Proofs Smart Contract support. This is the first implementation of BLS12-381 curve pairing verification on Bitcoin.
 
 For platform-agnostic applications, the choice requires a tradeoff between performance (BN254) and security (BLS12-381). We recommend choosing BLS12-381 as it is more secure, still fast enough to be practical, but slower than BN254. 
 
