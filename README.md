@@ -24,11 +24,11 @@ BLS12-381 uses a twist, reduces the degree of the extension field by a factor of
 
 Find a u such that $u^6 = (1+i)^{−1}$, 
 then can define twisting transformation as<br>
-&emsp;$(x, y)$ → $(x/u^2, y/u^3)$<br>
+&emsp; $(x, y)$ → $(x/u^2, y/u^3)$<br>
 This transforms original curve<br>
-&emsp;$E:y^2 = x^3 + 4$<br>
+&emsp; $E:y^2 = x^3 + 4$<br>
 into the curve<br>
-&emsp;$E^′:y^2 = x^3 + 4/u^6 = x^3 + 4(1 + i)$.
+&emsp; $E^′:y^2 = x^3 + 4/u^6 = x^3 + 4(1 + i)$.
 
 So these are the two groups we will be using:
 - $G_1 ⊂ E(F_q)$ where $E:y^2 = x^3 + 4$
@@ -107,7 +107,7 @@ You can find azkSNARK snarkjs/Circom tutorials by [sCrypt.io](https://learn.scry
 
 #### ![zkSNARK](https://github.com/walker9296/BLS12-381/blob/main/res/zkSNARK.png)
 From the `proof.json` file, obtain the ***A***, ***B***, ***C*** parameters, and from the `verification_key.json` file, obtain the ***α***, ***β***, ***ϒ***, ***δ*** parameters, use the ***ic*** item and the public inputs from the `public.json` file to calculate the ***L*** parameter:<br>
-&emsp;$L = \sum_{i=0}^l w_i*IC_i$<br>
+&emsp; $L = \sum_{i=0}^l w_i*IC_i$<br>
 where public inputs $w = (1, w_1, …, w_i)$
 #### 3.3.1 verification_key.json
 ```json
