@@ -25,7 +25,7 @@ BLS12-381 uses a twist, reduces the degree of the extension field by a factor of
 
 Find a u such that $u^6 = (1+i)^{−1}$, 
 then can define twisting transformation as
-$$(x, y)$ → $(x/u^2, y/u^3)$$
+$$(x, y) → (x/u^2, y/u^3)$$
 This transforms original curve
 $$E:y^2 = x^3 + 4$$
 into the curve
@@ -38,17 +38,17 @@ So these are the two groups we will be using:
 ### 1.3 Efficient Pairing
 Calculation of a pairing has two parts: 
 - Miller loop: compute an intermediate function of the two input points $f(pointG1, pointG2)$ recursively
-- Final exponentiation: raise f to a large power c
+- Final exponentiation: raise $f$ to a large power c
 
 equation 1:
 $$e(pointG1, pointG2) = f(pointG1, pointG2)^c$$
-where $c = (q^{12} - 1)/r$
+where $c = (q^{12} - 1)/r$ <br>
 Both are quite expensive, but there’s a nice hack can reduce the impact of both of them.
 
 #### 1.3.1 Reduce to 3 pairings
 verifying equation 2：
 $$e(A, B) = e(α, β) * e(L, ϒ) * e(C, δ)$$
-where α and β are known at setup, so we can precompute the second pairing and replace α and β with it as part of the verification key, saving one pairing.
+where α and β are known at setup, so we can precompute the second pairing e(α, β) and replace α and β with it as part of the verification key, saving one pairing.
 
 #### 1.3.2 One single final exponentiation
 Eq.2 can be rewritten as:
@@ -59,7 +59,8 @@ Plugging in Eq.1, we get:
 $$(f(α, β) * f(L, ϒ) * f(C, δ) * f(-A, B))^c = 1$$
 Instead of calculating final exponentiation 4 times, which are computationally intensive, we only have to do it once in the end.
 
-Note that, the output file verification_key.json from snarkjs/circom, there is a "vk_alphabeta_12" item precomputed, but you can't use it for precomputed $f(α, β)$, this data is calculated by miller loop and finanl exponentiation($f(α, β)^c$).
+Note that, the output file of `verification_key.json` from ***snarkjs/circom***, there is a `vk_alphabeta_12` item precomputed, but you can't use it for precomputed $f(α, β)$, this data is calculated by miller loop and finanl exponentiation( $f(α, β)^c$ ). You can run 
+`testcase1.scrypt` contract in debug mode to get precomputed $f(α, β)$ data.
 
 ### 1.4 Coordinate systems
 Finding the inverse of a field element is an expensive operation, so implementations of elliptic curve arithmetic try to avoid it as much as possible. 
@@ -84,7 +85,7 @@ although this process is more complicated, for the operation of calculating a la
 
 ## 2. Prerequisites
 - [Visual Studio Code](https://code.visualstudio.com/download)
-- [VSCode Extension sCrypt IDE](https://scrypt-ide.readthedocs.io/en/latest/index.html) search sCrypt in the VS Code extensions marketplace
+- [VSCode Extension sCrypt IDE](https://scrypt-ide.readthedocs.io/en/latest/index.html) search sCrypt in the VSC extensions marketplace
 - [Node.js ](https://nodejs.org/en/download/) require version >= 12
 
 ## 3. How to run locally
@@ -127,10 +128,10 @@ parameter(3-pairs and 1 preCompute-pair)：
 verifying equation ：
 $$e(A, B) = e(α, β) * e(L, ϒ) * e(C, δ)$$
 ### 4.3 Verifying Key and Proof data from snarkjs/Circom 
-You can find azkSNARK snarkjs/Circom tutorials by [sCrypt.io](https://learn.scrypt.io/zh/courses/Build-a-zkSNARK-based-Battleship-Game-on-Bitcoin-630b1fe6c26857959e13e160/lessons/3/chapters/1)
+You can find zkSNARK snarkjs/Circom tutorials by [sCrypt.io](https://learn.scrypt.io/zh/courses/Build-a-zkSNARK-based-Battleship-Game-on-Bitcoin-630b1fe6c26857959e13e160/lessons/3/chapters/1)
 
 #### ![zkSNARK](https://github.com/walker9296/BLS12-381/blob/main/res/zkSNARK.png)
-From the `proof.json` file, obtain the ***A***, ***B***, ***C*** parameters, and from the `verification_key.json` file, obtain the ***α***, ***β***, ***ϒ***, ***δ*** parameters, use the ***ic*** item and the public inputs from the `public.json` file to calculate the ***L*** parameter:
+From the `proof.json` file obtain the ***A***, ***B***, ***C*** parameters, and from the `verification_key.json` file obtain the ***α***, ***β***, ***ϒ***, ***δ*** parameters, use the ***ic*** item and the public inputs from the `public.json` file to calculate the ***L*** parameter:
 $$L = \sum_{i=0}^n w_i*IC_i$$
 where public inputs $w = (1, w_1, …, w_i)$
 #### 4.3.1 verification_key.json
