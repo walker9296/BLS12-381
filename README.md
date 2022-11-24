@@ -130,14 +130,14 @@ $$e(A, B) = e(α, β) * e(L, ϒ) * e(C, δ)$$
 ### 4.3 Verifying Key and Proof data from snarkjs/Circom 
 You can find zkSNARK snarkjs/Circom tutorials by [sCrypt.io](https://learn.scrypt.io/zh/courses/Build-a-zkSNARK-based-Battleship-Game-on-Bitcoin-630b1fe6c26857959e13e160/lessons/3/chapters/1)
 
-You need to select the `bls12381` curve when executing the ***snarkjs/Circom*** command, because the default is the `bn128` curve.
+You need to select the `bls12381` curve command line option when executing the ***snarkjs/Circom*** command, because the default is the `bn128` curve.
 E.g,
-- compile circuit
+- when compile circuit<br>
 `circom ../work_circom/factor.circom --r1cs --wasm --prime bls12381`
-- Start a new powers of tau ceremony
+- when start a new powers of tau ceremony<br>
 `snarkjs powersoftau new bls12-381 12 pot12_0000.ptau`
 
-Then you can have `"curve": "bls12381"` in the output `verification_key.json` and `proof.json` files instead of `"curve": "bn128"`
+Then you can confirm that there is a `"curve": "bls12381"` item in the output `verification_key.json` and `proof.json` files instead of `"curve": "bn128"` item.
 
 #### ![zkSNARK](https://github.com/walker9296/BLS12-381/blob/main/res/zkSNARK.png)
 From the `proof.json` file obtain the ***A***, ***B***, ***C*** parameters, and from the `verification_key.json` file obtain the ***α***, ***β***, ***ϒ***, ***δ*** parameters, use the ***ic*** item and the public inputs from the `public.json` file to calculate the ***L*** parameter:
