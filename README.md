@@ -46,7 +46,7 @@ Affine coordinates are the traditional representation of points with just an $(x
 The basic idea is to represent the coordinate using notional fractions, reducing the number of actual division operations needed. To do this, a third coordinate is introduced and use $(X, Y, Z)$ for the internal representation of a point. 
 #### Jacobian coordinates
 The Jacobian point $(X, Y, Z)$ represents the Affine point $(X/Z^2, Y/Z^3)$. The curve equation becomes<br>
-&emsp;$Y^2 = X^3 + 4Z^6$
+&emsp; $Y^2 = X^3 + 4Z^6$
 
 Note that, the easiest way to import the Affine point $(x, y)$ is to map it to $(x, y, 1)$.
 
@@ -107,7 +107,7 @@ You can find azkSNARK snarkjs/Circom tutorials by [sCrypt.io](https://learn.scry
 
 #### ![zkSNARK](https://github.com/walker9296/BLS12-381/blob/main/res/zkSNARK.png)
 From the `proof.json` file, obtain the ***A***, ***B***, ***C*** parameters, and from the `verification_key.json` file, obtain the ***α***, ***β***, ***ϒ***, ***δ*** parameters, use the ***ic*** item and the public inputs from the `public.json` file to calculate the ***L*** parameter:<br>
-&emsp; $L = \sum_{i=0}^l w_i*IC_i$<br>
+$$L = \sum_{i=0}^l w_i*IC_i$$
 where public inputs $w = (1, w_1, …, w_i)$
 #### 3.3.1 verification_key.json
 ```json
