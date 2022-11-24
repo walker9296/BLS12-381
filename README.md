@@ -8,14 +8,14 @@ Reference:
 - [Efficient zk-SNARKs on Bitcoin: Technical Explainer](https://xiaohuiliu.medium.com/efficient-zk-snarks-on-bitcoin-technical-explainer-880fa04ee155)
 - [BLS12-381 For The Rest Of Us](https://hackmd.io/@benjaminion/bls12-381)
 
-Curve BLS12-381 is both **pairing-friendly** (making it efficient for digital signatures) and effective for constructing **zkSnarks**. The security target is 128 bits.
+Curve BLS12-381 is both **pairing-friendly** (making it efficient for digital signatures) and effective for constructing **zkSnarks**. The security target of BLS12-381 is 128 bits.
 
 ### The curves
 BLS12-381 deals with two curves, 
 - the simpler one is over the finite field $F_q$ , equation is<br>
-     $y^2 = x^3 + 4$, call this curve $E(F_q)$
+$y^2 = x^3 + 4$, call this curve $E(F_q)$
 - the other one is defined over an extension of $F_q$ to $F_{q^2}$ , equation is<br>
-     $y^2 = x^3 + 4(1 + i)$, call this curve $E^′(F_{q^2})$.
+$y^2 = x^3 + 4(1 + i)$, call this curve $E^′(F_{q^2})$.
 
 A pairing is a bilinear map, it takes as input two points, each from a group of the same order r. these two groups call $G_1$ and $G_2$ .
 
@@ -24,11 +24,11 @@ BLS12-381 uses a twist, reduces the degree of the extension field by a factor of
 
 Find a u such that $u^6 = (1+i)^{−1}$, 
 then can define twisting transformation as<br>
-     $(x, y)$ → $(x/u^2, y/u^3)$
+&emsp;$(x, y)$ → $(x/u^2, y/u^3)$<br>
 This transforms original curve<br>
-     $E:y^2 = x^3 + 4$ 
+&emsp;$E:y^2 = x^3 + 4$<br>
 into the curve<br>
-     $E^′:y^2 = x^3 + 4/u^6 = x^3 + 4(1 + i)$.
+&emsp;$E^′:y^2 = x^3 + 4/u^6 = x^3 + 4(1 + i)$.
 
 So these are the two groups we will be using:
 - $G_1 ⊂ E(F_q)$ where $E:y^2 = x^3 + 4$
@@ -46,17 +46,18 @@ Affine coordinates are the traditional representation of points with just an $(x
 The basic idea is to represent the coordinate using notional fractions, reducing the number of actual division operations needed. To do this, a third coordinate is introduced and use $(X, Y, Z)$ for the internal representation of a point. 
 #### Jacobian coordinates
 The Jacobian point $(X, Y, Z)$ represents the Affine point $(X/Z^2, Y/Z^3)$. The curve equation becomes<br>
-     $Y^2 = X^3 + 4Z^6$
+&emsp;$Y^2 = X^3 + 4Z^6$
 
 Note that, the easiest way to import the Affine point $(x, y)$ is to map it to $(x, y, 1)$.
 
-### Montgomery multiplication
+### Montgomery form
 A way to calculate modulo that doesn't require division is the so-called Montgomery multiplication. To calculate the modular multiplication operation,
 1. convert the multiplier into Montgomery form,
 2. use Montgomery multiplication,
 3. convert the result from Montgomery form,<br>
 
 although this process is more complicated, for the operation of calculating a large number of modular multiplications, it is only the initial process of entering and exiting the Montgomery form, but each calculation of Montgomery multiplication in the middle is faster than calculating the ordinary modular multiplication Save a lot of time by multiplying.
+
 ## 1. Prerequisites
 1. [Visual Studio Code](https://code.visualstudio.com/download)
 2. [VSCode Extension sCrypt IDE](https://scrypt-ide.readthedocs.io/en/latest/index.html) search sCrypt in the VS Code extensions marketplace
@@ -86,8 +87,7 @@ static function pairCheck3Point(
             PointG1 a2, PointG2 b2,
             PointG1 a3, PointG2 b3) : bool
 ```
-
-#### function parameter(3-pairs and 1 preCompute-pair)：
+parameter(3-pairs and 1 preCompute-pair)：
 - a0 : ***A***, b0 : ***B***
 - millerb1a1 : preCompute miller(***α***, ***β***)
 - a2 : ***L***, b2 : ***ϒ***
@@ -100,16 +100,16 @@ static function pairCheck3Point(
 | a2  | b2  | ***L***  | ***ϒ***  |
 | a3  | b3  | ***C***  | ***δ***  |
 
-#### verifying formula：$e(A, B) = e(α, β) * e(L, ϒ) * e(C, δ)$
+verifying formula：<br>
+&emsp; $e(A, B) = e(α, β) * e(L, ϒ) * e(C, δ)$
 ### 3.3 Verifying Key and Proof data from snarkjs/Circom 
-zkSNARK snarkjs/Circom tutorial by [sCrypt.io](https://learn.scrypt.io/zh/courses/Build-a-zkSNARK-based-Battleship-Game-on-Bitcoin-630b1fe6c26857959e13e160/lessons/3/chapters/1)
+You can find azkSNARK snarkjs/Circom tutorials by [sCrypt.io](https://learn.scrypt.io/zh/courses/Build-a-zkSNARK-based-Battleship-Game-on-Bitcoin-630b1fe6c26857959e13e160/lessons/3/chapters/1)
 
 #### ![zkSNARK](https://github.com/walker9296/BLS12-381/blob/main/res/zkSNARK.png)
-From the `proof.json` file, directly obtain the ***A***, ***B***, ***C*** parameters, and from the `verification_key.json` file, directly obtain the ***α***, ***β***, ***ϒ***, ***δ*** parameters, use the ***ic*** item and the public inputs in the `public.json` file to calculate the ***L*** parameter:<br>
-$L = \sum_{i∈[0,l)} w_i∙IC_i$
-public inputs ***w*** = (1,***w1***,…,***wi***) 
+From the `proof.json` file, obtain the ***A***, ***B***, ***C*** parameters, and from the `verification_key.json` file, obtain the ***α***, ***β***, ***ϒ***, ***δ*** parameters, use the ***ic*** item and the public inputs from the `public.json` file to calculate the ***L*** parameter:<br>
+&emsp;$L = \sum_{i=0}^l w_i*IC_i$<br>
+where public inputs $w = (1, w_1, …, w_i)$
 #### 3.3.1 verification_key.json
-
 ```json
 {
  "protocol": "groth16",
