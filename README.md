@@ -11,14 +11,22 @@ Reference:
 Curve BLS12-381 is both **pairing-friendly** (making it efficient for digital signatures) and effective for constructing **zkSnarks**. The security target is 128 bits.
 
 ### The curves
-BLS12-381 deals with two curves, the simpler one is over the finite field $F_q$ , equation is $y^2 = x^3 + 4$, call this curve $E(F_q)$. The other curve is defined over an extension of $F_q$ to $F_{q^2}$ , the curve equation is $y^2 = x^3 + 4(1 + i)$, call the curve $E^′(F_{q^2})$.
+BLS12-381 deals with two curves, 
+- the simpler one is over the finite field $F_q$ , equation is $y^2 = x^3 + 4$, call this curve $E(F_q)$
+- the other one is defined over an extension of $F_q$ to $F_{q^2}$ , equation is $y^2 = x^3 + 4(1 + i)$, call this curve $E^′(F_{q^2})$.
 
 A pairing is a bilinear map, it takes as input two points, each from a group of the same order r. these two groups call $G_1$ and $G_2$ .
 
 ### Twists
-BLS12-381 uses a twist, reduces the degree of the extension field by a factor of six. So $G_2$ on the twisted curve can be defined over $F_{q^2}$ instead of $F_{q^{12}}$ , which is a huge saving in complexity, doing arithmetic in $F_{q^12}$ is horribly complicated and inefficient.
+BLS12-381 uses a twist, reduces the degree of the extension field by a factor of six. So $G_2$ on the twisted curve can be defined over $F_{q^2}$ instead of $F_{q^{12}}$ , which is a huge saving in complexity, doing arithmetic in $F_{q^{12}}$ is horribly complicated and inefficient.
 
-Find a u such that $u^6 = (1+i)^{−1}$, then can define twisting transformation as $(x, y)$ → $(x/u^2, y/u^3)$. This transforms original curve $E:y^2 = x^3 + 4$ into the curve $E^′:y^2 = x^3 + 4/u^6 = x^3 + 4(1 + i)$. 
+Find a u such that $u^6 = (1+i)^{−1}$, 
+then can define twisting transformation as 
+     $(x, y)$ → $(x/u^2, y/u^3)$
+This transforms original curve 
+     $E:y^2 = x^3 + 4$ 
+into the curve 
+     $E^′:y^2 = x^3 + 4/u^6 = x^3 + 4(1 + i)$.
 
 So these are the two groups we will be using:
 - $G_1 ⊂ E(F_q)$ where $E:y^2 = x^3 + 4$
@@ -28,17 +36,25 @@ So these are the two groups we will be using:
 Calculation of a pairing has two parts: the Miller loop and the final exponentiation. Both are quite expensive, but there’s a nice hack can reduce the impact of the final exponentiation.
 
 ### Coordinate systems
-Finding the inverse of a field element (i.e. division) is an expensive operation, so implementations of elliptic curve arithmetic try to avoid it as much as possible. 
+Finding the inverse of a field element is an expensive operation, so implementations of elliptic curve arithmetic try to avoid it as much as possible. 
 
-#### ffine coordinates
-Affine coordinates are the traditional representation of points with just an (x,y) pair of coordinates, where x and y satisfy the curve equation. This is what we normally use when storing and transmitting points.
+#### Affine coordinates
+Affine coordinates are the traditional representation of points with just an $(x, y)$ pair of coordinates, where x and y satisfy the curve equation. This is what we normally use when storing and transmitting points.
 
-The basic idea is to represent the coordinate using notional fractions, reducing the number of actual division operations needed. To do this, a third coordinate is introduced and use (X,Y,Z) for the internal representation of a point. 
+The basic idea is to represent the coordinate using notional fractions, reducing the number of actual division operations needed. To do this, a third coordinate is introduced and use $(X, Y, Z)$ for the internal representation of a point. 
 #### Jacobian coordinates
-The Jacobian point $(X, Y, Z)$ represents the Affine point $(X/Z^2,Y/Z^3)$. The curve equation becomes $Y^2 = X^3 + 4Z^6$.
+The Jacobian point $(X, Y, Z)$ represents the Affine point $(X/Z^2, Y/Z^3)$. The curve equation becomes
+     $Y^2 = X^3 + 4Z^6$
 
 Note that, the easiest way to import the Affine point $(x, y)$ is to map it to $(x, y, 1)$.
 
+### Montgomery multiplication
+`#0969DA`
+A way to calculate modulo that doesn't require division is the so-called Montgomery multiplication. To calculate the modular multiplication operation,
+1. convert the multiplier into Montgomery form,
+2. use Montgomery multiplication,
+3. convert the result from Montgomery form,
+although this process is more complicated, for the operation of calculating a large number of modular multiplications, it is only the initial process of entering and exiting the Montgomery form, but each calculation of Montgomery multiplication in the middle is faster than calculating the ordinary modular multiplication Save a lot of time by multiplying.
 ## 1. Prerequisites
 1. [Visual Studio Code](https://code.visualstudio.com/download)
 2. [VSCode Extension sCrypt IDE](https://scrypt-ide.readthedocs.io/en/latest/index.html) search sCrypt in the VS Code extensions marketplace
