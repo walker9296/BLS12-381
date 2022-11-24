@@ -1,9 +1,14 @@
 # BLS12-381 library for BitcoinSV Smart Contract
 [sCrypt](https://github.com/sCrypt-Inc/boilerplate) Library of BLS12-381 Zero-Knowledge Proofs support.
 
-Curve BLS12-381 is both **pairing-friendly** (making it efficient for digital signatures) and effective for constructing **zkSnarks**.
+For platform-agnostic applications, the choice requires a tradeoff between performance (BN254) and security (BLS12-381). We recommend choosing BLS12-381 as it is more secure, still fast enough to be practical, but slower than BN254. 
 
-The security target is 128 bits.
+Reference:
+- [Groth16](https://2π.com/22/groth16/#verifying)
+- [Efficient zk-SNARKs on Bitcoin: Technical Explainer](https://xiaohuiliu.medium.com/efficient-zk-snarks-on-bitcoin-technical-explainer-880fa04ee155)
+- [BLS12-381 For The Rest Of Us](https://hackmd.io/@benjaminion/bls12-381)
+
+Curve BLS12-381 is both **pairing-friendly** (making it efficient for digital signatures) and effective for constructing **zkSnarks**. The security target is 128 bits.
 
 ### The curves
 BLS12-381 deals with two curves, the simpler one is over the finite field $F_q$ , equation is $y^2 = x^3 + 4$, call this curve $E(F_q)$. The other curve is defined over an extension of $F_q$ to $F_{q^2}$ , the curve equation is $y^2 = x^3 + 4(1 + i)$, call the curve $E^′(F_{q^2})$.
@@ -11,12 +16,11 @@ BLS12-381 deals with two curves, the simpler one is over the finite field $F_q$ 
 A pairing is a bilinear map, it takes as input two points, each from a group of the same order r. these two groups call $G_1$ and $G_2$ .
 
 ### Twists
-BLS12-381 uses a “sextic twist”, reduces the degree of the extension field by a factor of six. So $G_2$ on the twisted curve can be defined over $F_{q^2}$ instead of $F_{q^{12}}$, which is a huge saving in complexity, doing arithmetic in $F_{q^2}$ is horribly complicated and inefficient.
+BLS12-381 uses a twist, reduces the degree of the extension field by a factor of six. So $G_2$ on the twisted curve can be defined over $F_{q^2}$ instead of $F_{q^{12}}$ , which is a huge saving in complexity, doing arithmetic in $F_{q^12}$ is horribly complicated and inefficient.
 
-if find a u such that $u^6 = (1+i)^{−1}$, then can define twisting transformation as $(x, y)$ → $(x/u^2, y/u^3)$. This transforms original curve $E:y^2 = x^3 + 4$ into the curve $E^′:y^2 = x^3 + 4/u^6 = x^3 + 4(1 + i)$. 
+Find a u such that $u^6 = (1+i)^{−1}$, then can define twisting transformation as $(x, y)$ → $(x/u^2, y/u^3)$. This transforms original curve $E:y^2 = x^3 + 4$ into the curve $E^′:y^2 = x^3 + 4/u^6 = x^3 + 4(1 + i)$. 
 
 So these are the two groups we will be using:
-
 - $G_1 ⊂ E(F_q)$ where $E:y^2 = x^3 + 4$
 - $G_2 ⊂ E(F_{q^2})$ where $E^′:y^2 = x^3 + 4/u^6 = x^3 + 4(1 + i)$
 
