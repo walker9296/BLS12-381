@@ -40,10 +40,9 @@ contract bls12381testcase1 {
         //     require(true);
         // }
 
-        Engine bls = BLS12381Pairing.NewPairingEngine();
-        bls = BLS12381Pairing.AddPair(bls, Alpha, Beta);
+        Pair pair = BLS12381Pairing.affinePair(Alpha, Beta);
 
-        fe12 ff = BLS12381Pairing.millerLoop(bls);
+        fe12 ff = BLS12381Pairing.millerLoop(pair.g1, pair.g2);
         bytes bb = b'00';
         loop(2) : i {
             loop(3) : j {

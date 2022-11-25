@@ -33,7 +33,7 @@ library BLS12381 {
     static const int R1sft384 = 0x01000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000;
     static const int Minv_neg = 0x00ceb06106feaafc9468b316fee268cf5819ecca0e8eb2db4c16ef2ef0c8e30b48286adb92d9d113e889f3fffcfffcfffd;
 
-    //----------------PtG1Zero
+    //----------------
     static const int S = 32;
     static const bytes mask = reverseBytes(num2bin(1, S), S);
     static const bytes zero = reverseBytes(num2bin(0, S), S);
@@ -109,7 +109,7 @@ library BLS12381 {
         return res >= 0 ? res : modulus + res;
     }
 
-    //--------------------- field_element.go
+    //--------------------- 
 
     static function oneFe2() : fe2 {
         return [r1, 0];
@@ -156,7 +156,7 @@ library BLS12381 {
     }
 
 
-    //--------------------- fp.go
+    //--------------------- 
     static function toMont(fe a) : fe {
         fe res = a << 384;
         res = res % P;
@@ -245,7 +245,7 @@ library BLS12381 {
         return toMont(toMont(modInverseEGCD(e, P)));
     }
 
-    //--------------------- fp2.go
+    //--------------------- 
     static function addFe2(fe2 a, fe2 b) : fe2 {
         return [mod(a[0] + b[0], P), mod(a[1] + b[1], P)];
     }
@@ -314,7 +314,7 @@ library BLS12381 {
         return  c;
     }
 
-    //--------------------- fp6.go
+    //--------------------- 
     static function addFe6(fe6 a, fe6 b) : fe6 {
         return [addFe2(a[0], b[0]), addFe2(a[1], b[1]), addFe2(a[2], b[2])];
     }
@@ -693,7 +693,7 @@ library BLS12381 {
         return c;
     }
 
-    //--------------------- g1.go
+    //--------------------- 
     static function IsZeroG1(PointG1 c) : bool {
         return c[2] == 0;
     }
@@ -839,7 +839,7 @@ library BLS12381 {
         return res;
     }
 
-    //--------------------- g2.go
+    //--------------------- 
     static function ZeroG2() : PointG2 {
         return [zeroFe2(), oneFe2(), zeroFe2()];
     }
