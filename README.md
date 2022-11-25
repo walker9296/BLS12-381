@@ -19,7 +19,7 @@ Reference:
 1. [Library](#41-library)
 1. [API](#42-api)
 1. [Verifying Key and Proof data](#43-verifying-key-and-proof-data-from-snarkjscircom)
-1. [Testcase](#52-testcase-a-b-c)
+1. [Testcase](#5-testcase)
 
 ## 1. Curve BLS12-381
 Curve BLS12-381 is both **pairing-friendly** (making it efficient for digital signatures) and effective for constructing **zkSnarks**. The security target of BLS12-381 is 128 bits.
