@@ -156,6 +156,7 @@ From the `proof.json` file obtain the ***A***, ***B***, ***C*** parameters, and 
 $$L = \sum_{i=0}^n w_i*IC_i$$
 where public inputs $w = (1, w_1, …, w_i)$
 #### 4.3.1 verification_key.json
+[testcase B verification_key.json](https://github.com/walker9296/BLS12-381/blob/main/tests/snarkjs_output_json/testB/verification_key.json)
 ```json
 {
  "protocol": "groth16",
@@ -184,6 +185,7 @@ where public inputs $w = (1, w_1, …, w_i)$
 }
 ```
 #### 4.3.2 proof.json
+[testcase A proof.json](https://github.com/walker9296/BLS12-381/blob/main/tests/snarkjs_output_json/testA/proof.json)
 ```json
 {
  "pi_a": ["386406607244204......", "3355814159298......", "1"],
@@ -196,8 +198,9 @@ where public inputs $w = (1, w_1, …, w_i)$
 }
 ```
 #### 4.3.3 public.json
+[testcase A public.json](https://github.com/walker9296/BLS12-381/blob/main/tests/snarkjs_output_json/testB/public.json)
 ```json
 [
- "91"
+ "13221"
 ]
 ```
