@@ -8,6 +8,18 @@ Reference:
 - [Efficient zk-SNARKs on Bitcoin: Technical Explainer](https://xiaohuiliu.medium.com/efficient-zk-snarks-on-bitcoin-technical-explainer-880fa04ee155)
 - [BLS12-381 For The Rest Of Us](https://hackmd.io/@benjaminion/bls12-381)
 
+## Table of Contents
+1. [The curves](#11-the-curves)
+1. [Twists](#12-twists)
+1. [Efficient Pairing](#13-efficient-pairing)
+1. [Coordinate systems](#14-coordinate-systems)
+1. [Montgomery form](#15-montgomery-form)
+1. [Prerequisites](#2-prerequisites)
+1. [How to run locally](#3-how-to-run-locally)
+1. [Library](#41-library)
+1. [API](#42-api)
+1. [Verifying Key and Proof data](#43-verifying-key-and-proof-data-from-snarkjscircom)
+
 ## 1. Curve BLS12-381
 Curve BLS12-381 is both **pairing-friendly** (making it efficient for digital signatures) and effective for constructing **zkSnarks**. The security target of BLS12-381 is 128 bits.
 
@@ -87,7 +99,7 @@ although this process is more complicated, for the operation of calculating a la
 - [Visual Studio Code(VSC)](https://code.visualstudio.com/download)
 - [VSC Extension sCrypt IDE](https://scrypt-ide.readthedocs.io/en/latest/index.html) search sCrypt in the VSC extensions marketplace
 - [Node.js ](https://nodejs.org/en/download/) require version >= 12
-
+- PC CPU >= 2.6GHz, ***Memory >= 64GB***
 ## 3. How to run locally
 1. Run `npm install` to install deps
 2. Run testcase from VSCode GUI, select `testcase0.scrypttest.js` file, right mouse button click at file edit window, select menu `Run sCrypt Test`
