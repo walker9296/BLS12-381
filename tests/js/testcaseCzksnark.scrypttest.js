@@ -2,38 +2,16 @@ const { expect } = require('chai');
 
 const { buildContractClass, Int, buildTypeClasses } = require('scryptlib');
 const { compileContract } = require('../../helper');
-// const { buildContractClass, Int, buildTypeClasses, compileContractAsync } = require('scryptlib');
-// const { join } = require('path');
 
 describe('Test sCrypt contract BLS12-381 In Javascript', () => {
   let vk, st;
-  let proofB, inputsB; //testcaseB
   let proofC, inputsC; //testcaseC
 
   before(async () => {
-    // const filePath = join(__dirname, '..', '..','contracts', 'ZKSNARK12381.scrypt')
-    // const out = join(__dirname, 'out')
-    // const desc = await compileContractAsync(filePath, { out: out });
-    // Bls12381Test = buildContractClass(desc);
-
     const desc = compileContract('zksnark12381.scrypt');
     Bls12381Test = buildContractClass(desc);
 
     const {Proof, VerifyingKey3Point} = buildTypeClasses(Bls12381Test);
-
-    proofB = new Proof({
-      a: [new Int("3831895056398928708660383108568006083155938968635842689180675625947226281433382971663198186674312525550617185318672"),
-          new Int("83158578527336401144921945868142987972391208273078865896684760946192744523793003809121038451107576228240697872144"),
-          new Int(1)],
-      b:[[new Int("2507221208844795068107327475699315903177633857838284891471254264549018793013403559258577555495665343187331366177451"),
-          new Int("2233281459018825642051006570077335882019591559393257452435102069084396032616021556860044729073316859871784059224335")],
-         [new Int("994826333839644177933033692087324301261599450229676309412336780995338031733808017748585863485768227902832516258809"),
-          new Int("3872653214783676914183087696592885208554090748858037728484441552300323606733769575627118902628334272082984183775308")],
-         [new Int(1), new Int(0)]],
-      c: [new Int("827323420682163769413918998969531500735932002609668924466365460827564488963196590615497959315329713473957436323053"),
-          new Int("3303228749967935815797726536304784962604037507997874155742025528502743214430259074081846650365989967801418277422662"),
-          new Int(1)]
-    });
 
     proofC = new Proof({
       a: [new Int("2075626938315935991723945304267293035922733530603424992662140707751157809535751306580194671145028222665057550999294"),
@@ -84,23 +62,12 @@ describe('Test sCrypt contract BLS12-381 In Javascript', () => {
                new Int(1)]]
     })
 
-    inputsB = [new Int(13221)];
     inputsC = [new Int(8)];
         
     st = new Bls12381Test();
   });
 
-  // it('testcaseA Verify3Point should return true', () => {
-  //   result = st.testVerify3Point().verify();
-  //   expect(result.success, result.error).to.be.true
-  // });
-
-  // it('testcaseB Verify3Point should return true', () => {
-  //   result = st.testVerifyOptimized(inputsB, proofB, vk).verify();
-  //   expect(result.success, result.error).to.be.true
-  // });
-
-  it('testcaseC Verify3Point should return true', () => {
+  it('testcase C Verify3Point should return true', () => {
     result = st.testVerifyOptimized(inputsC, proofC, vk).verify();
     expect(result.success, result.error).to.be.true
   });
