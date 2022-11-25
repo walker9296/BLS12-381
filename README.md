@@ -19,6 +19,7 @@ Reference:
 1. [Library](#41-library)
 1. [API](#42-api)
 1. [Verifying Key and Proof data](#43-verifying-key-and-proof-data-from-snarkjscircom)
+1. [Testcase](#42-api)
 
 ## 1. Curve BLS12-381
 Curve BLS12-381 is both **pairing-friendly** (making it efficient for digital signatures) and effective for constructing **zkSnarks**. The security target of BLS12-381 is 128 bits.
@@ -156,7 +157,7 @@ From the `proof.json` file obtain the ***A***, ***B***, ***C*** parameters, and 
 $$L = \sum_{i=0}^n w_i*IC_i$$
 where public inputs $w = (1, w_1, …, w_i)$
 #### 4.3.1 verification_key.json
-[testcase B verification_key.json](https://github.com/walker9296/BLS12-381/blob/main/tests/snarkjs_output_json/testB/verification_key.json)
+[testcase B verification_key.json](https://github.com/walker9296/BLS12-381/blob/main/tests/snarkjs_output_json/caseB/verification_key.json)
 ```json
 {
  "protocol": "groth16",
@@ -185,7 +186,7 @@ where public inputs $w = (1, w_1, …, w_i)$
 }
 ```
 #### 4.3.2 proof.json
-[testcase A proof.json](https://github.com/walker9296/BLS12-381/blob/main/tests/snarkjs_output_json/testA/proof.json)
+[testcase A proof.json](https://github.com/walker9296/BLS12-381/blob/main/tests/snarkjs_output_json/caseA/proof.json)
 ```json
 {
  "pi_a": ["386406607244204......", "3355814159298......", "1"],
@@ -198,9 +199,43 @@ where public inputs $w = (1, w_1, …, w_i)$
 }
 ```
 #### 4.3.3 public.json
-[testcase A public.json](https://github.com/walker9296/BLS12-381/blob/main/tests/snarkjs_output_json/testB/public.json)
+[testcase A public.json](https://github.com/walker9296/BLS12-381/blob/main/tests/snarkjs_output_json/caseB/public.json)
 ```json
 [
  "13221"
 ]
 ```
+
+## 5. Testcase
+### 5.1 Design a circuit
+Implement a circuit in the Circom language. For example, this simple  proves that people know to factor the integer n into two integers without revealing the integers. The circuit has two private inputs named p and q and one public input named n.
+```c
+// p and q are factorizations of n
+pragma circom 2.0.0;
+
+template Factor() {
+
+    // Private Inputs:
+    signal input p;
+    signal input q;
+
+    // Public Inputs:
+    signal output n;
+
+    assert(p > 1);
+    assert(q > 1);
+
+    n <== p * q;
+
+}
+
+component main = Factor();
+```
+
+### 5.2 Testcase A, B, C
+two private inputs p and q, and one public input n.
+| Testcase | p | q | n |
+| ------- | ------- | ------- | ------- |
+| A  | 7  | 13  | 91  |
+| B  | 117  | 112  | 13221  |
+| C  | 2  | 4  | 8  |
