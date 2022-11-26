@@ -138,9 +138,11 @@ parameter(3-pairs and 1 preCompute-pair)：
 | a2  | b2  | ***L***  | ***ϒ***  |
 | a3  | b3  | ***C***  | ***δ***  |
 
-verifying equation ：
+verifying equation 2：
 $$e(A, B) = e(α, β) * e(L, ϒ) * e(C, δ)$$
-### 4.3 Verifying Key and Proof data from snarkjs/Circom 
+#### 4.2.1 Verifying Key and Proof data from snarkjs/Circom 
+![zkSNARK](https://github.com/walker9296/BLS12-381/blob/main/res/zkSNARK.png)
+
 You can find zkSNARK snarkjs/Circom tutorials by [sCrypt.io](https://learn.scrypt.io/zh/courses/Build-a-zkSNARK-based-Battleship-Game-on-Bitcoin-630b1fe6c26857959e13e160/lessons/3/chapters/1)
 
 You need to select the ***bls12381*** curve command line option when executing the ***snarkjs/Circom*** command, because the default is the `bn128` curve.
@@ -152,11 +154,10 @@ E.g,
 
 Then you can confirm that there is a `"curve": "bls12381"` item in the output `verification_key.json` and `proof.json` files instead of `"curve": "bn128"` item.
 
-#### ![zkSNARK](https://github.com/walker9296/BLS12-381/blob/main/res/zkSNARK.png)
 From the `proof.json` file obtain the ***A***, ***B***, ***C*** parameters, and from the `verification_key.json` file obtain the ***α***, ***β***, ***ϒ***, ***δ*** parameters, use the ***ic*** item and the public inputs from the `public.json` file to calculate the ***L*** parameter:
 $$L = \sum_{i=0}^n w_i*IC_i$$
 where public inputs $w = (1, w_1, …, w_i)$
-#### 4.3.1 verification_key.json
+#### 4.2.2 verification_key.json
 [testcase B verification_key.json](https://github.com/walker9296/BLS12-381/blob/main/tests/snarkjs_output_json/caseB/verification_key.json)
 ```json
 {
@@ -185,7 +186,7 @@ where public inputs $w = (1, w_1, …, w_i)$
       ["341669953409364......", "26956794051246......", "1"]]
 }
 ```
-#### 4.3.2 proof.json
+#### 4.2.3 proof.json
 [testcase A proof.json](https://github.com/walker9296/BLS12-381/blob/main/tests/snarkjs_output_json/caseA/proof.json)
 ```json
 {
@@ -198,7 +199,7 @@ where public inputs $w = (1, w_1, …, w_i)$
  "curve": "bls12381"
 }
 ```
-#### 4.3.3 public.json
+#### 4.2.4 public.json
 [testcase A public.json](https://github.com/walker9296/BLS12-381/blob/main/tests/snarkjs_output_json/caseB/public.json)
 ```json
 [
@@ -232,10 +233,11 @@ template Factor() {
 component main = Factor();
 ```
 
-### 5.2 Testcase A, B, C
+### 5.2 Testcase A, B, C, D
 two private inputs p and q, and one public input n.
 | Testcase | p | q | n |
 | ------- | ------- | ------- | ------- |
 | A  | 7  | 13  | 91  |
 | B  | 117  | 112  | 13221  |
 | C  | 2  | 4  | 8  |
+| D  | 353457875866834523  | 95829357230752351385  | 33871641052465802932898657193367175168 |
