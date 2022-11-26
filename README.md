@@ -3,7 +3,7 @@
 
 For platform-agnostic applications, the choice requires a tradeoff between performance (BN254) and security (BLS12-381). We recommend choosing BLS12-381 as it is more secure, still fast enough to be practical, but slower than BN254. 
 
-<font size="-2">
+<font size="5">
 ・ BN254 (254bit, 32byte P):
 P = 0x30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd47;
 x = 0x44e992b44a6909f1
