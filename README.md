@@ -110,7 +110,7 @@ although this process is more complicated, for the operation of calculating a la
 - [Visual Studio Code(VSC)](https://code.visualstudio.com/download)
 - [VSC Extension sCrypt IDE](https://scrypt-ide.readthedocs.io/en/latest/index.html) search sCrypt in the VSC extensions marketplace
 - [Node.js ](https://nodejs.org/en/download/) require version >= 12
-- PC CPU >= 2.6GHz, ***Memory >= 64GB***
+- PC CPU >= 2.6GHz, ***Memory >= 24GB***
 ## 3. How to run locally
 1. Run `npm install` to install deps
 2. Run testcase from VSCode GUI, select `testcase0.scrypttest.js` file, right mouse button click at file edit window, select menu `Run sCrypt Test`
