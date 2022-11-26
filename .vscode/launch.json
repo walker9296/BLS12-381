@@ -8,7 +8,7 @@
             "type": "scrypt",
             "request": "launch",
             "name": "testMod",
-            "program": "${workspaceFolder}/contracts/bls12381case0.scrypt",
+            "program": "${workspaceFolder}/contracts/testcase0.scrypt",
             "constructorArgs": [],
             "pubFunc": "testMod",
             "pubFuncArgs": []
@@ -17,7 +17,7 @@
             "type": "scrypt",
             "request": "launch",
             "name": "modInverseBranchlessP",
-            "program": "${workspaceFolder}/contracts/bls12381case0.scrypt",
+            "program": "${workspaceFolder}/contracts/testcase0.scrypt",
             "constructorArgs": [],
             "pubFunc": "testModInverseBranchlessP",
             "pubFuncArgs": []
@@ -26,7 +26,7 @@
           "type": "scrypt",
           "request": "launch",
           "name": "testEGCD",
-          "program": "${workspaceFolder}/contracts/bls12381case0.scrypt",
+          "program": "${workspaceFolder}/contracts/testcase0.scrypt",
           "constructorArgs": [],
           "pubFunc": "testEGCD",
           "pubFuncArgs": []
@@ -44,7 +44,7 @@
             "type": "scrypt",
             "request": "launch",
             "name": "alphaBetaMiller",
-            "program": "${workspaceFolder}/contracts/bls12381case1.scrypt",
+            "program": "${workspaceFolder}/contracts/testcase1.scrypt",
             "constructorArgs": [],
             "pubFunc": "alphaBetaMillerLoop",
             "pubFuncArgs": []

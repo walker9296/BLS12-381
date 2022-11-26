@@ -618,28 +618,102 @@ library BLS12381 {
         return c;
     }
 
-    static function cyclotomicExp(fe12 a, int s) : fe12 {
-        bytes mb = reverseBytes(num2bin(s, S), S);
+    // static function cyclotomicExp(fe12 a, int s) : fe12 {
+    //     bytes mb = reverseBytes(num2bin(s, S), S);
+    //     fe12 z = oneFe12();
+
+    //     loop(64) : i {
+    //         z = cyclotomicSquare(z);
+    //         if ((mb & (mask << (63 - i))) != zero) {
+    //             z = mulFe12(z, a);
+    //         }
+    //     }
+    //     return z;
+    // }
+
+    //X = b'd2 01 00 00 00 01 00 00';
+    //1101 0010 0000 0001 0000 0000 0000 0000 0000 0000 0000 0001 0000 0000 0000 0000;
+    static function cyclotomicExp2(fe12 a) : fe12 {
         fe12 z = oneFe12();
 
-        int firstOne = 0;
-        loop (256) : i {
-            bytes mm = mask << i;
-            if ((mb & mm) != zero) {
-                firstOne = i + 1;
-            }
-        }
-        loop(256) : i {
-            if(i < firstOne) {
-                z = cyclotomicSquare(z);
-                if ((mb & (mask << (firstOne - 1 - i))) != zero) {
-                    z = mulFe12(z, a);
-                }
-            } else {
-                //test break point
-                s = i;
-            }
-        }
+        z = cyclotomicSquare(z);
+        z = mulFe12(z, a);
+        z = cyclotomicSquare(z);
+        z = mulFe12(z, a);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = mulFe12(z, a);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = mulFe12(z, a);
+        z = cyclotomicSquare(z);
+
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = mulFe12(z, a);
+
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = mulFe12(z, a);
+
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+        z = cyclotomicSquare(z);
+
         return z;
     }
 
@@ -818,9 +892,10 @@ library BLS12381 {
         PointG1 n = p;
         if (e != 0) {
             bytes mb = reverseBytes(num2bin(e, S), S);
+            bytes mm = b'00';
             int firstOne = 0;
             loop (256) : i {
-                bytes mm = mask << i;
+                mm = mask << i;
                 if ((mb & mm) != zero) {
                     firstOne = i + 1;
                 }
@@ -829,7 +904,8 @@ library BLS12381 {
             // bytes ad1 = b'00';
             loop (256) : i {
                 if(i < firstOne) {
-                    if ((mb & (mask << i)) != zero) {
+                    mm = mask << i;
+                    if ((mb & mm) != zero) {
                         res = AddG1(res, n);
                     }
                     n = DoubleG1(n);

@@ -67,7 +67,7 @@ describe('Test sCrypt contract BLS12-381 In Javascript', () => {
     st = new Bls12381Test();
   });
 
-  it('testcase C Verify3Point should return true', () => {
+  it('testcase D Verify3Point should return true', () => {
     result = st.testVerifyOptimized(inputsD, proofD, vk).verify();
     expect(result.success, result.error).to.be.true
   });
