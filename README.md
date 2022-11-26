@@ -4,14 +4,18 @@
 For platform-agnostic applications, the choice requires a tradeoff between performance (BN254) and security (BLS12-381). We recommend choosing BLS12-381 as it is more secure, still fast enough to be practical, but slower than BN254. 
 
 BN254 - 256bit P:
+```javascript
 P = 0x30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd47;
 x = 0x44e992b44a6909f1
 q = 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593f0000001;
+```
 
 BLS12-381 - 384bit P:
+```javascript
 p = 0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaab
 x = 0xd201000000010000
 q = 0x73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001
+```
 
 Reference:
 - [Groth16](https://2π.com/22/groth16/#verifying)
