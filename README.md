@@ -114,8 +114,11 @@ although this process is more complicated, for the operation of calculating a la
 │    └─ zksnark12381.scrypt      # zk-SNARKs verifier contract example
 └─ tests
      └─ js
-        ├─ testcase0.scrypttest.js     # simple testcase for quickstart
-        └─ zksnark12381.scrypttest.js  # zk-SNARKs verifier API example
+        ├─ testcase0.scrypttest.js        # simple testcase
+        ├─ testcaseAzksnark.scrypttest.js # testcase A
+        ├─ testcaseBzksnark.scrypttest.js # testcase B
+        ├─ testcaseCzksnark.scrypttest.js # testcase C
+        └─ testcaseDzksnark.scrypttest.js # testcase D
 </pre>
 ### 4.2 API
 ```js
@@ -234,7 +237,7 @@ component main = Factor();
 ```
 
 ### 5.2 Testcase A, B, C, D
-two private inputs p and q, and one public input n.
+Two private inputs p and q, and one public input n.
 | Testcase | p | q | n |
 | ------- | ------- | ------- | ------- |
 | A  | 7  | 13  | 91  |
