@@ -9,7 +9,7 @@ $\Tiny{x = 0x44e992b44a6909f1}$<br>
 $\Tiny{q = 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593f0000001}$
 
 ・ BLS12-381 (381bit, 48byte P):
-$\Tiny{p = 0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaab}$<br>
+$\Tiny{p = 0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaab}$
 $\Tiny{x = 0xd201000000010000}$<br>
 $\Tiny{q = 0x73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001}$
 
