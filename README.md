@@ -253,7 +253,7 @@ Two private inputs p and q, and one public input n.
 
 ### 5.3 Testnet deploy
 #### Contract
-![zksnark12381deploy.scrypt](https://github.com/walker9296/BLS12-381/blob/main/contracts/zksnark12381deploy.scrypt)
+[zksnark12381deploy.scrypt](https://github.com/walker9296/BLS12-381/blob/main/contracts/zksnark12381deploy.scrypt)
 #### Deploy and unlock()
 ![deploy_unlock](https://github.com/walker9296/BLS12-381/blob/main/res/deploy_unlock.png)
 
