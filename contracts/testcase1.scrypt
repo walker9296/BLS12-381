@@ -1,4 +1,4 @@
-import "bls12381pairing3.scrypt";
+import "bls12381pairing.scrypt";
 
 contract bls12381testcase1 {
 

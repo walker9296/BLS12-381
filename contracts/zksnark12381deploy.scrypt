@@ -1,0 +1,111 @@
+import "bls12381.scrypt";
+import "bls12381pairing.scrypt";
+
+struct VerifyingKey3Point {
+    fe12 millerb1a1;
+    PointG2 gamma;
+    PointG2 delta;
+    PointG1[2] ic; // Size of array should be N + 1
+}
+
+struct Proof {
+    PointG1 a;
+    PointG2 b;
+    PointG1 c;
+}
+
+library ZKSNARK12381 {
+    static const int N = 1;    // Number of public inputs.
+    static const int N_1 = 2;  // N + 1
+
+    static const fe12 millerb1a1 = [
+     [[0x020c581cbadc2d2be5a0a3406cef43a63171454a9920df0bb4298bf06970724aa5423fbaef995d2af1ee1a8ef70a2c68,
+       0x09d91a203b388ce0d797e12a0ce3195d2f8e973ea23620ba4581431ac8690df0dfbf8414b5f31b71acac1fa6419c80a1],
+      [0x147154278115aee946a84b1031e7550b4b504798616de424f0dc86ead467ef003de4587162c31a713403c6af6bcafab6,
+       0x139e423e338813e54359da8714f7514aac3481fbfdecb7feda859f9e9d8f8e357088b616c91058e94e78537217726389],
+      [0x051297ae9bda43b4c02f95e87fd6f905ee6d0f00c6e3bb853c50883d06461eed12bd3a279955e939b606d4dc6ef43119,
+       0x0e5d43efec7474cc4a8ca53c1a51e6bcae885b90726333f87eec2011191fed0f61becb08d1c833b1f78c01e13729e7d9]],
+     [[0x053a87a0aa0be06c0e753a9422027d56079c384f749c1e82ffded5c6277c56eccf639e730d44cce49cefd76231fded1f,
+       0x09ae321bd9eaf0bea4cc15d0bf7dbaa91ad6620e2af21907c0c8b70e7ba275bbe0b2c4fc08bdf9a6597e372211b31fb6],
+      [0x028f18c105144e9711d346a305af0d05d6e40211d641b1e7a285929ce306a3354a5776cbe5a9740eb543a23894a530c2,
+       0x040024f11127d4e7d9891d05b6979029187c7752e6eec1504cf95c6800b05d01b06e2ddacc031f659dc5faece30cabb2],
+      [0x1654f333db8c21105e314c4b8c4e8aed0b1977dabeee859e9eadc0480002e665cd6098bb629b40bc949fbc0448d3da2b,
+       0x00fa63b7fc081d5e0249bd143497ac15405560f41928640e988d1e9793cf56497bf24f643cb8b85d37e676a6f0a4bd89]]
+    ];
+
+    static const PointG2 Gamma = [[
+            0x024aa2b2f08f0a91260805272dc51051c6e47ad4fa403b02b4510b647ae3d1770bac0326a805bbefd48056c8c121bdb8,
+            0x13e02b6052719f607dacd3a088274f65596bd0d09920b61ab5da61bbdc7f5049334cf11213945d57e5ac7d055d042b7e
+        ],[
+            0x0ce5d527727d6e118cc9cdc6da2e351aadfd9baa8cbdd3a76d429a695160d12c923ac9cc3baca289e193548608b82801,
+            0x0606c4a02ea734cc32acd2b02bc28b99cb3e287e85a763af267492ab572e99ab3f370d275cec1da1aaa9075ff05f79be      
+        ],[
+            0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001,
+            0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+        ]];
+    static const PointG2 Delta = [[
+            0x04bc7d1740524cf2a035fb09e83ec6a84c10b96425518359c2badaf6b4d7b0b90c0964d07639753c339f8a4921964c54,
+            0x0b14086412fc04a481a603cb24e2927ee428c8d2aec822323644bafb07e712795cde53bce0fa399f64917926556c36a0
+        ],[
+            0x1447994273c0b3e466b1e6c2f629a93895c7250662434e63a7d81fc41ceb6b4906799aab9a8239b2a81a7eda0a2b69fd,
+            0x003c7b001f8745c755e51ab0520f772f78eaf62ceea30d2cee0e374c9549b68cc0db165e63fa2818b3bd95c8840732c8      
+        ],[
+            0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001,
+            0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+        ]];
+    static const PointG1 [2]IC = [
+        [0x14aa1710533f1edeba1e570ae85090e80014871923a1e2b2e8cfb2f6386cb994931d9343804edf6dcceed4779ce4a7b2,
+        0x10d82a3617faa093037522674c51e8f402c3dd396f0d44d4fd4aaf0ab03523da73d794613ff8ba1312e1ba34cfcba927,
+        0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001],
+        [0x199b3ae3fde2b046ba57f0c1d258fcc453709c73d43323c92800fff978af09d7be2cc0b85a69277ed3550befca991df0,
+        0x15792bbcb518a4bdccdae4713986c4b8ae95d762db92aa36af2ba1cdd3faecd0e665d1fd36ff34824e8eb23d66cc84b7,
+        0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001]
+    ];
+
+    static VerifyingKey3Point vk = {millerb1a1, Gamma, Delta, IC};
+
+    static function vkXSetup(int[N] inputs, PointG1[N_1] ic) : PointG1 {
+	    PointG1 vk_x = ic[0];
+        loop (N) : i {
+            PointG1 p = BLS12381.MulScalarG1(ic[i + 1], inputs[i]);
+            vk_x = BLS12381.AddG1(vk_x, p);
+        }
+	    return vk_x;
+    }
+
+    static function verify3Point(int[N] inputs, Proof proof) : bool {
+        loop(3) : k {
+            proof.a[k] = BLS12381.toMont(proof.a[k]);
+            proof.c[k] = BLS12381.toMont(proof.c[k]);
+            loop(N_1) : m {
+                vk.ic[m][k] = BLS12381.toMont(vk.ic[m][k]);
+            }
+        }
+        loop(3) : j {
+            loop(2) : k {
+                proof.b[j][k] = BLS12381.toMont(proof.b[j][k]);
+                vk.gamma[j][k] = BLS12381.toMont(vk.gamma[j][k]);
+                vk.delta[j][k] = BLS12381.toMont(vk.delta[j][k]);
+            }
+        }
+
+	    PointG1 vk_x = vk.ic[0];
+        loop (N) : i {
+            PointG1 p = BLS12381.MulScalarG1(vk.ic[i + 1], inputs[i]);
+            vk_x = BLS12381.AddG1(vk_x, p);
+        }
+
+        return BLS12381Pairing.pairCheck3Point(
+                proof.a, proof.b,
+                vk.millerb1a1,
+                vk_x, vk.gamma,
+                proof.c, vk.delta);
+    }
+}
+
+contract Verifier {
+    public function unlock(int[ZKSNARK12381.N] inputs, Proof proof) {
+        require(ZKSNARK12381.verify3Point(inputs, proof));
+    }
+}
+

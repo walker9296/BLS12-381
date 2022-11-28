@@ -10,7 +10,6 @@ library BLS12381Pairing {
     static const bytes X = b'd201000000010000';
     static const bytes MASK = b'0000000000000001';
     static const bytes ZERO = b'0000000000000000';
-    // static const int PAIR_LEN = 1;
 
     static const fe2 [10]Fe2_10Zero = repeat(BLS12381.Fe2Zero, 10);
 
@@ -101,7 +100,6 @@ library BLS12381Pairing {
         if(BLS12381.IsZeroG2(twistPoint) == false) {
             PointG2 r = twistPoint;
             int j = 0;
-            // int XBits = 62;
 
             fe12 rtn = doublingStep(ellCoeffs[j], r);
             ellCoeffs[j] = rtn[0];
@@ -435,24 +433,21 @@ library BLS12381Pairing {
 
             rtn = doublingStep(ellCoeffs[j], r);
             ellCoeffs[j] = rtn[0];
-            // r = rtn[1];
-            // j++;
         }
 
         return ellCoeffs;
     }
 
+    // 101 0010 0000 0001 0000 0000 0000 0000 0000 0000 0000 0001 0000 0000 0000 0000;
     static function millerLoop(PointG1 g1, PointG2 g2) : fe12 {
         fe6[68] ellCoeffs = repeat(BLS12381.Fe6Zero, 68);
         
         ellCoeffs = preCompute(ellCoeffs, g2);
 
         fe12 f = BLS12381.oneFe12();
-        fe2 [10]t2 = Fe2_10Zero; //Todo
+        fe2 [2]t2 = repeat(BLS12381.Fe2Zero, 2);
         int j = 0;
-        // int XBits = 62;
 
-// 101 0010 0000 0001 0000 0000 0000 0000 0000 0000 0000 0001 0000 0000 0000 0000;
         t2[0] = BLS12381.mulByFqFe2(ellCoeffs[j][2], g1[1]);
         t2[1] = BLS12381.mulByFqFe2(ellCoeffs[j][1], g1[0]);
         f = BLS12381.mulBy014AssignFe12(f, ellCoeffs[j][0], t2[1], t2[0]);
