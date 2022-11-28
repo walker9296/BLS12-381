@@ -29,7 +29,7 @@ Reference:
 1. [Library](#41-library)
 1. [API](#42-api)
 1. [Verifying Key and Proof data](#43-verifying-key-and-proof-data-from-snarkjscircom)
-1. [Testcase](#5-testcase)
+1. [Test](#5-testcase)
 
 ## 1. Curve BLS12-381
 Curve BLS12-381 is both **pairing-friendly** (making it efficient for digital signatures) and effective for constructing **zkSnarks**. The security target of BLS12-381 is 128 bits.
@@ -104,13 +104,12 @@ A way to calculate modulo that doesn't require division is the so-called Montgom
 2. use Montgomery multiplication,
 3. convert the result from Montgomery form,<br>
 
-although this process is more complicated, for the operation of calculating a large number of modular multiplications, it is only the initial process of entering and exiting the Montgomery form, but each calculation of Montgomery multiplication in the middle is faster than calculating the ordinary modular multiplication Save a lot of time by multiplying.
 
 ## 2. Prerequisites
 - [Visual Studio Code(VSC)](https://code.visualstudio.com/download)
 - [VSC Extension sCrypt IDE](https://scrypt-ide.readthedocs.io/en/latest/index.html) search sCrypt in the VSC extensions marketplace
 - [Node.js ](https://nodejs.org/en/download/) require version >= 12
-- PC CPU >= 2.6GHz, ***Memory >= 24GB***
+- PC CPU >= 2.6GHz, Memory >= 24GB
 ## 3. How to run locally
 1. Run `npm install` to install deps
 2. Run testcase from VSCode GUI, select `testcase0.scrypttest.js` file, right mouse button click at file edit window, select menu `Run sCrypt Test`
@@ -120,7 +119,7 @@ although this process is more complicated, for the operation of calculating a la
 <pre>
 ├─ contracts
 │    ├─ bls12381.scrypt          # bls12-381 library
-│    ├─ bls12381pairing3.scrypt  # bls12-381 ZKP lib(Optimized 3-pairs)
+│    ├─ bls12381pairing.scrypt   # bls12-381 ZKP lib(Optimized 3-pairs)
 │    └─ zksnark12381.scrypt      # zk-SNARKs verifier contract example
 └─ tests
      └─ js
@@ -251,3 +250,12 @@ Two private inputs p and q, and one public input n.
 | B  | 117  | 112  | 13221  |
 | C  | 2  | 4  | 8  |
 | D  | 353457875866834523  | 95829357230752351385  | 33871641052465802932898657193367175168 |
+
+### 5.3 Testnet deploy
+#### Contract - zksnark12381deploy.scrypt
+#### Deploy and unlock()
+![deploy_unlock](https://github.com/walker9296/BLS12-381/blob/main/res/deploy_unlock.png)
+
+#### Testnet - DeployTx
+![testnet_tx](https://github.com/walker9296/BLS12-381/blob/main/res/testnet_tx.png)
+https://test.whatsonchain.com/tx/eba34263bbede27fd1e08a84459066fba7eb10510a3bb1d92d735c067b8309dd
