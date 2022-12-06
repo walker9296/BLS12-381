@@ -1,5 +1,5 @@
 # BLS12-381 library for BitcoinSV
-[sCrypt](https://github.com/sCrypt-Inc/boilerplate) BLS12-381 Library for Bitcoin Zero-Knowledge Proofs Smart Contract support. The current sCrypt zero-knowledge proof library is based on BN256, the BLS12-381 Library for Bitcoin is the first implementation of BLS12-381 curve pairing verification on Bitcoin. Now you can choose to use BN256 or BLS12-381 to implement zero-knowledge proof applications.
+[sCrypt](https://github.com/sCrypt-Inc/boilerplate) BLS12-381 Library for Bitcoin Zero-Knowledge Proofs Smart Contract support. The current sCrypt zero-knowledge proof library is based on BN256, the BLS12-381 Library for Bitcoin is the first implementation of BLS12-381 curve pairing verification on Bitcoin. Now you can choose to use BN256 or BLS12-381 to implement zero-knowledge proof applications. Bitcoin is currently the only blockchain that supports zero-knowledge proofs and can choose multiple curves.
 
 For platform-agnostic applications, the choice requires a tradeoff between performance (BN254) and security (BLS12-381). We recommend choosing BLS12-381 as it is more secure, still fast enough to be practical, but slower than BN254. 
 
