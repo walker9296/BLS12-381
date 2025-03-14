@@ -1,4 +1,4 @@
-# BLS12-381 library for BitcoinSV
+![image](https://github.com/user-attachments/assets/a7071318-5315-4944-b644-43fa8a4ee185)# BLS12-381 library for BitcoinSV
 [sCrypt](https://github.com/sCrypt-Inc/boilerplate) BLS12-381 Library for Bitcoin Zero-Knowledge Proofs Smart Contract support. The current sCrypt zero-knowledge proof library is based on BN256, the BLS12-381 Library for Bitcoin is the first implementation of BLS12-381 curve pairing verification on Bitcoin. Now you can choose to use BN256 or BLS12-381 to implement zero-knowledge proof applications. Bitcoin is currently the only blockchain that supports zero-knowledge proofs and can choose multiple curves.
 
 For platform-agnostic applications, the choice requires a tradeoff between performance (BN254) and security (BLS12-381). We recommend choosing BLS12-381 as it is more secure, still fast enough to be practical, but slower than BN254. 
@@ -30,7 +30,8 @@ Reference:
 1. [API](#42-api)
 1. [Verifying Key and Proof data](#43-verifying-key-and-proof-data-from-snarkjscircom)
 1. [Test](#5-testcase)
-
+1. [获奖Zero-Knowledge Hackathon](#6-Hackathon)
+   
 ## 1. Curve BLS12-381
 Curve BLS12-381 is both **pairing-friendly** (making it efficient for digital signatures) and effective for constructing **zkSnarks**. The security target of BLS12-381 is 128 bits.
 
@@ -260,3 +261,9 @@ Two private inputs p and q, and one public input n.
 #### Testnet - DeployTx
 ![testnet_tx](https://github.com/walker9296/BLS12-381/blob/main/res/testnet_tx.png)
 https://test.whatsonchain.com/tx/eba34263bbede27fd1e08a84459066fba7eb10510a3bb1d92d735c067b8309dd
+
+### 6 获奖Zero-Knowledge Hackathon
+该软件是2022年11月BitcoinSV零知识证明黑客松比赛的冠军获得作品。
+![获奖信息CoinGeek](https://coingeek.com/bitcoin-association-for-bsv-zero-knowledge-hackathon-winners-share-45000-in-prize-money/)
+![获奖信息DevPost](https://devpost.com/software/bls12-381-library)
+![获奖信息Youtube](https://www.youtube.com/watch?v=RdATO2Q_zGo)
