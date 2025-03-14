@@ -262,8 +262,9 @@ Two private inputs p and q, and one public input n.
 ![testnet_tx](https://github.com/walker9296/BLS12-381/blob/main/res/testnet_tx.png)
 https://test.whatsonchain.com/tx/eba34263bbede27fd1e08a84459066fba7eb10510a3bb1d92d735c067b8309dd
 
-### 6 获奖Zero-Knowledge Hackathon
+### 6. Hackathon
+#### 获奖Zero-Knowledge Hackathon
 该软件是2022年11月BitcoinSV零知识证明黑客松比赛的冠军获得作品。
-![获奖信息CoinGeek](https://coingeek.com/bitcoin-association-for-bsv-zero-knowledge-hackathon-winners-share-45000-in-prize-money/)
-![获奖信息DevPost](https://devpost.com/software/bls12-381-library)
-![获奖信息Youtube](https://www.youtube.com/watch?v=RdATO2Q_zGo)
+[获奖信息CoinGeek](https://coingeek.com/bitcoin-association-for-bsv-zero-knowledge-hackathon-winners-share-45000-in-prize-money/)
+[获奖信息DevPost](https://devpost.com/software/bls12-381-library)
+[获奖信息Youtube](https://www.youtube.com/watch?v=RdATO2Q_zGo)
